@@ -1,0 +1,10 @@
+# Sembunyikan file konfigurasi database
+supabase-config.js
+
+# File sampah sistem
+.DS_Store
+Thumbs.db
+node_modules/
+dist/
+build/
+.env
