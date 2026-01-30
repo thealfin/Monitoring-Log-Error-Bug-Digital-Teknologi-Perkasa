@@ -1,0 +1,4169 @@
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Pesantren Smart Digital - Integrated Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <style type="text/tailwindcss">
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+        font-size: 24px;
+      }
+      .icon-fill {
+        font-variation-settings:
+          "FILL" 1,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      :root {
+        --sidebar-color: #001d1a;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        height: 8px;
+        width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #334155;
+      }
+      .nav-active {
+        @apply bg-white/10 text-white;
+      }
+      .nav-inactive {
+        @apply text-gray-400 hover:bg-white/5 hover:text-white transition-colors;
+      }
+      /* Status Badges */
+      .badge-status-report {
+        @apply bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 border border-yellow-200;
+      }
+      .badge-status-todo {
+        @apply bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200;
+      }
+      .badge-status-progress {
+        @apply bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200;
+      }
+      .badge-status-done {
+        @apply bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border border-green-200;
+      }
+      .badge-status-reject {
+        @apply bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border border-red-200;
+      }
+
+      /* Priority Badges */
+      .badge-prio-low {
+        @apply bg-yellow-50 text-yellow-600 dark:bg-yellow-900/10 dark:text-yellow-500 border border-yellow-200/50;
+      }
+      .badge-prio-medium {
+        @apply bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400 border border-orange-200/50;
+      }
+      .badge-prio-high {
+        @apply bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400 border border-red-200/50;
+      }
+      .badge-prio-critical {
+        @apply bg-red-600 text-white dark:bg-red-700 dark:text-red-50 border border-red-500 shadow-sm;
+      }
+
+      /* Chat Bubbles */
+      .bubble-other {
+        @apply bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-2xl rounded-tl-none p-4 max-w-[85%];
+      }
+      .bubble-me {
+        @apply bg-emerald-600 text-white rounded-2xl rounded-tr-none p-4 max-w-[85%] self-end;
+      }
+
+      /* Fix blinking cursor/caret bug on text and icons */
+      body {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        cursor: default;
+        caret-color: transparent;
+      }
+
+      input,
+      textarea,
+      [contenteditable="true"],
+      .selectable-text {
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+        cursor: text;
+        caret-color: auto;
+      }
+
+      .material-symbols-outlined {
+        user-select: none;
+        cursor: default;
+      }
+      .hidden { display: none !important; }
+      .dark .dark\:hidden { display: none !important; }
+      .dark .dark\:block { display: block !important; }
+      .dark .dark\:flex { display: flex !important; }
+      .dark .dark\:inline-block { display: inline-block !important; }
+
+      /* Reset for clickable elements */
+      button,
+      a,
+      .nav-item {
+        cursor: pointer;
+        user-select: none;
+      }
+
+      /* Coming Soon Ribbon */
+      .ribbon-container {
+        position: relative;
+        overflow: hidden;
+      }
+      .ribbon-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        z-index: 40;
+        overflow: hidden;
+      }
+      .ribbon-banner {
+        background: linear-gradient(90deg, transparent, rgba(0, 29, 26, 0.95), #001d1a, rgba(0, 29, 26, 0.95), transparent);
+        color: white;
+        padding: 20px 0;
+        width: 150%;
+        transform: rotate(-15deg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+        border-top: 4px solid #facc15;
+        border-bottom: 4px solid #facc15;
+        backdrop-filter: blur(2px);
+      }
+      .ribbon-text {
+        font-size: 3.5rem;
+        font-weight: 900;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        text-shadow: 0 0 20px rgba(250, 204, 21, 0.5);
+        color: #facc15;
+      }
+      .ribbon-subtext {
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        color: #ffffff;
+        margin-top: -5px;
+      }
+    </style>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#001D1A",
+              "background-light": "#f6f7f7",
+              "background-dark": "#16181c",
+              "brand-green": "#008f80",
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark font-display text-[#121417] overflow-hidden"
+  >
+    <div class="flex h-screen w-full">
+      <!-- SIDEBAR -->
+      <aside
+        id="sidebar"
+        class="fixed inset-y-0 left-0 z-50 w-72 bg-[var(--sidebar-color)] text-white border-r border-white/5 transform -translate-x-full md:translate-x-0 md:relative transition-transform duration-300 ease-in-out flex flex-col"
+      >
+        <div class="p-6 flex items-center gap-3">
+          <div
+            class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-10 shadow-lg border border-white/10"
+            style="
+              background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuApMLl25c-NRgpYpUcO6Tsui_YcY4tJzjKCKGReK9lhoBM-0R1Fr-07VWayvtK_GRk7TKb1uW-ezRHrZE7C6x4Epg2WTsYLCqeKmCk-9hIvhm_c3kJ3KMPPQ_XkDaq54srSSDx7TvoVZmS9Ujq8JyAFEUAl5tIC1GJ1bvuXDBmMjvdUTr5ntBiKqtyZuO9N8wyrsfKNtEMEzKn_pi9mUOumfnBkcMFOEeMGw3K21u59nV8H6zMwGONrsPCDYyVuv8WUFN6X386ltXfw&quot;);
+            "
+          ></div>
+          <div class="flex flex-col">
+            <h1
+              id="sidebar-app-name"
+              class="text-white text-base font-bold leading-tight"
+            >
+              Pesantren Smart Digital
+            </h1>
+            <p class="text-emerald-500/80 text-xs font-normal">
+              Bug Tracker <br />
+              & Log Monitoring
+            </p>
+          </div>
+        </div>
+        <div
+          class="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto custom-scrollbar"
+        >
+          <button
+            onclick="navigateTo('dashboard')"
+            id="nav-dashboard"
+            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl nav-active text-left w-full"
+          >
+            <span class="material-symbols-outlined">dashboard</span>
+            <p class="text-sm font-medium">Dashboard</p>
+          </button>
+          <button
+            onclick="navigateTo('all-logs')"
+            id="nav-all-logs"
+            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl nav-inactive text-left w-full"
+          >
+            <span class="material-symbols-outlined">description</span>
+            <p class="text-sm font-medium">All Logs</p>
+          </button>
+          <button
+            onclick="navigateTo('reports')"
+            id="nav-reports"
+            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl nav-inactive text-left w-full"
+          >
+            <span class="material-symbols-outlined">analytics</span>
+            <p class="text-sm font-medium">Reports</p>
+          </button>
+          <div class="h-px bg-white/10 my-2 mx-4"></div>
+          <button
+            onclick="navigateTo('settings')"
+            id="nav-settings"
+            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl nav-inactive text-left w-full"
+          >
+            <span class="material-symbols-outlined">settings</span>
+            <p class="text-sm font-medium">Settings</p>
+          </button>
+        </div>
+        <div class="p-4 border-t border-white/10">
+          <div class="flex items-center gap-3 px-2 py-2">
+            <div
+              id="sidebar-user-avatar"
+              class="bg-center bg-no-repeat bg-cover rounded-full size-10 border-2 border-white/20 overflow-hidden flex items-center justify-center text-white font-bold bg-emerald-600"
+              style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCgY94Yk_belSnRWNdZFLvhY4AgzODMQtKHrsME9W0EAbVyJc595T8JJ-fQiRu-nxBI3ghgL_Hsxwf5M-UmYYZxb8d6xsTRqFY25Qd8ab8i-6s2nncqa4FuMcNPxlOkbISoM0wvhXVIaegXon7QdEEqN5JXZotmzpcGmw8ivZ1PaG3w0AENUL0sBqGsHRcztMqtBWGHsxZQulLpk_qSGU0gdWc-Ymv17NGq_3IMz0YxJ-M2DjuYufrTAMU7I7F5nKukrl');"
+            ></div>
+            <div class="flex flex-col min-w-0">
+              <p id="sidebar-user-name" class="text-white text-sm font-medium truncate">Viewer User</p>
+              <div class="flex items-center gap-1">
+                <span id="sidebar-user-role" class="bg-blue-500/20 text-blue-300 text-[10px] px-1.5 py-0.5 rounded border border-blue-500/30 font-semibold uppercase">Viewer</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT AREA -->
+      <main
+        class="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-background-dark relative"
+      >
+        <!-- HEADER -->
+        <header
+          class="flex items-center justify-between px-6 py-4 bg-white dark:bg-[#1e1e1e] border-b border-[#ebedef] dark:border-gray-800 shrink-0 z-20"
+        >
+          <div class="flex items-center gap-4">
+            <button
+              onclick="toggleSidebar()"
+              class="md:hidden p-2 text-gray-600 dark:text-gray-300"
+            >
+              <span class="material-symbols-outlined">menu</span>
+            </button>
+            <h2
+              id="page-title"
+              class="text-[#121417] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] hidden sm:block"
+            >
+              Dashboard Overview
+            </h2>
+          </div>
+          <div class="flex items-center gap-2 sm:gap-4">
+            <button
+              class="flex h-10 w-10 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors relative"
+            >
+              <span class="material-symbols-outlined">notifications</span>
+              <span
+                class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-[#1e1e1e]"
+              ></span>
+            </button>
+            <button
+              class="flex h-10 w-10 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors"
+            >
+              <span class="material-symbols-outlined">help</span>
+            </button>
+            <div
+              class="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-1 hidden sm:block"
+            ></div>
+            <button
+              class="flex h-10 w-10 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors"
+              onclick="document.documentElement.classList.toggle('dark')"
+            >
+              <span class="material-symbols-outlined dark:hidden"
+                >dark_mode</span
+              >
+              <span class="material-symbols-outlined hidden dark:block"
+                >light_mode</span
+              >
+            </button>
+          </div>
+        </header>
+
+        <!-- DYNAMIC PAGE CONTAINER -->
+        <div
+          id="content-container"
+          class="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8"
+        >
+          <!-- Content injected here -->
+        </div>
+      </main>
+    </div>
+
+    <!-- TEMPLATES -->
+
+    <!-- DASHBOARD TEMPLATE -->
+    <template id="tpl-dashboard">
+      <div class="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+        <div
+          class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+        >
+          <div class="flex flex-col gap-1">
+            <h2
+              data-t="dashboard"
+              class="text-[#121417] dark:text-white text-3xl font-extrabold leading-tight tracking-tight"
+            >
+              Dashboard Overview
+            </h2>
+            <p class="text-[#646f82] dark:text-gray-400 text-base font-normal">
+              <span data-t="welcome">Selamat datang kembali di Log Error & Bug Tracker Manajemen</span>
+              <span class="app-name-display font-bold"></span>,
+              <span class="current-role-label font-bold"></span>
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div
+            class="flex flex-col gap-3 rounded-xl p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm"
+          >
+            <div class="flex items-center justify-between">
+              <div class="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <span class="material-symbols-outlined text-blue-600"
+                  >bug_report</span
+                >
+              </div>
+              <span
+                class="text-xs font-bold badge-status-report px-2 py-0.5 rounded"
+                data-t="totalLog"
+                >Total</span
+              >
+            </div>
+            <div>
+              <p class="text-gray-500 dark:text-gray-400 text-xs" data-t="totalLog">Total Log</p>
+              <p
+                class="total-count text-[#121417] dark:text-white text-2xl font-bold"
+              >
+                0
+              </p>
+            </div>
+          </div>
+          <div
+            class="flex flex-col gap-3 rounded-xl p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm"
+          >
+            <div class="flex items-center justify-between">
+              <div class="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                <span class="material-symbols-outlined text-orange-600"
+                  >pending_actions</span
+                >
+              </div>
+              <span
+                class="text-xs font-bold badge-status-todo px-2 py-0.5 rounded"
+                data-t="todo"
+                >Aktif</span
+              >
+            </div>
+            <div>
+              <p class="text-gray-500 dark:text-gray-400 text-xs" data-t="todo">To Do</p>
+              <p
+                class="todo-count text-[#121417] dark:text-white text-2xl font-bold"
+              >
+                0
+              </p>
+            </div>
+          </div>
+          <div
+            class="flex flex-col gap-3 rounded-xl p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm"
+          >
+            <div class="flex items-center justify-between">
+              <div class="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <span class="material-symbols-outlined text-green-600"
+                  >check_circle</span
+                >
+              </div>
+              <span
+                class="text-xs font-bold badge-status-done px-2 py-0.5 rounded"
+                data-t="resolved"
+                >Selesai</span
+              >
+            </div>
+            <div>
+              <p class="text-gray-500 dark:text-gray-400 text-xs" data-t="resolved">Resolved</p>
+              <p
+                class="done-count text-[#121417] dark:text-white text-2xl font-bold"
+              >
+                0
+              </p>
+            </div>
+          </div>
+          <div
+            class="flex flex-col gap-3 rounded-xl p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm"
+          >
+            <div class="flex items-center justify-between">
+              <div class="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                <span class="material-symbols-outlined text-red-600"
+                  >dangerous</span
+                >
+              </div>
+              <span
+                class="text-xs font-bold badge-status-reject px-2 py-0.5 rounded"
+                data-t="reject"
+                >Ditolak</span
+              >
+            </div>
+            <div>
+              <p class="text-gray-500 dark:text-gray-400 text-xs" data-t="reject">Reject</p>
+              <p
+                class="reject-count text-[#121417] dark:text-white text-2xl font-bold"
+              >
+                0
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEARCH, FILTER, SORT BAR -->
+        <div class="flex flex-col md:flex-row gap-4 mb-6">
+          <div class="flex-1 relative">
+            <div
+              class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+            >
+              <span class="material-symbols-outlined text-gray-500 text-[22px]"
+                >search</span
+              >
+            </div>
+            <input
+              type="text"
+              id="dashboard-search"
+              oninput="renderDashboardTable()"
+              class="w-full h-12 pl-12 pr-4 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 transition-all dark:text-white"
+              data-t-placeholder="searchPlaceholder"
+              placeholder="Search logs by ID, keyword, or severity..."
+            />
+          </div>
+          <div class="flex gap-2">
+            <div class="relative h-12">
+              <select
+                id="dashboard-filter"
+                onchange="renderDashboardTable()"
+                class="h-full pl-10 pr-8 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-emerald-500/20 appearance-none transition-all cursor-pointer"
+              >
+                <option value="all" data-t="allStatus">All Status</option>
+                <option value="report" data-t="statusReport">🟡 Report</option>
+                <option value="todo" data-t="statusTodo">🔵 To Do</option>
+                <option value="progress" data-t="statusProgress">On Progress</option>
+                <option value="done" data-t="statusDone">🟢 Done</option>
+                <option value="reject" data-t="statusReject">🔴 Reject</option>
+              </select>
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-gray-500 pointer-events-none">filter_list</span>
+              <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-[18px] text-gray-400 pointer-events-none">expand_more</span>
+            </div>
+            <div class="relative h-12">
+              <select
+                id="dashboard-sort"
+                onchange="renderDashboardTable()"
+                class="h-full pl-10 pr-8 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-emerald-500/20 appearance-none transition-all cursor-pointer"
+              >
+                <option value="newest" data-t="newest">Newest</option>
+                <option value="oldest" data-t="oldest">Oldest</option>
+              </select>
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-gray-500 pointer-events-none">sort</span>
+              <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-[18px] text-gray-400 pointer-events-none">expand_more</span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="bg-white dark:bg-[#1e1e1e] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+        >
+          <div
+            class="px-6 py-5 flex justify-between items-center"
+          >
+            <h3 class="text-lg font-bold text-[#121417] dark:text-white" data-t="latestLogs">
+              Recent Logs
+            </h3>
+            <button
+              onclick="navigateTo('all-logs')"
+              class="bg-emerald-500/10 hover:bg-emerald-500 hover:text-white text-emerald-600 dark:text-emerald-400 dark:hover:text-white text-sm font-bold transition-all px-6 py-2.5 rounded-xl border border-emerald-500/20 flex items-center gap-2"
+              data-t="viewAll"
+            >
+              <span>View All</span>
+              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </button>
+          </div>
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr
+                  class="border-b border-gray-100 dark:border-gray-800 text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                >
+                  <th class="px-6 py-4" data-t="no">Bug ID</th>
+                  <th class="px-6 py-4" data-t="module">Description</th>
+                  <th class="px-6 py-4" data-t="status">Status</th>
+                  <th class="px-6 py-4" data-t="reporter">Assigned To</th>
+                  <th class="px-6 py-4" data-t="date">Date</th>
+                  <th class="px-6 py-4 text-right" data-t="action">Action</th>
+                </tr>
+              </thead>
+              <tbody
+                id="dashboard-table-body"
+                class="divide-y divide-gray-50 dark:divide-gray-800/50 text-sm"
+              >
+                <!-- Data injected here -->
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
+            <p class="text-xs text-gray-500">
+              <span data-t="latestLogsLimit">Menampilkan 5 log terbaru</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </template>
+
+    <!-- ALL LOGS TEMPLATE -->
+    <template id="tpl-all-logs">
+      <div class="flex flex-col h-full animate-in fade-in duration-500">
+        <div
+          class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"
+        >
+          <div class="flex flex-col gap-1">
+            <h2
+              data-t="allLogs"
+              class="text-[#121417] dark:text-white text-2xl font-extrabold tracking-tight"
+            >
+              All Logs Management
+            </h2>
+            <p data-t="allLogsDesc" class="text-gray-500 dark:text-gray-400 text-sm">
+              Comprehensive list of all tracked bugs, errors, and system logs.
+            </p>
+          </div>
+          <div class="flex gap-3">
+            <button
+              onclick="navigateTo('import-log')"
+              class="flex items-center justify-center gap-2 h-10 px-4 rounded-lg bg-white dark:bg-[#252525] border border-gray-200 dark:border-gray-700 text-[#121417] dark:text-white text-sm font-semibold shadow-sm hover:bg-gray-50 dark:hover:bg-[#2a2a2a] transition-all role-editor-only"
+            >
+              <span class="material-symbols-outlined text-[20px]"
+                >file_upload</span
+              >
+              <span data-t="importBtn">Import New Log</span>
+            </button>
+            <button
+              onclick="navigateTo('add-log')"
+              class="flex items-center justify-center gap-2 h-10 px-5 rounded-lg bg-emerald-600 dark:bg-brand-green hover:bg-emerald-500 text-white text-sm font-semibold shadow-md transition-all role-editor-only"
+            >
+              <span class="material-symbols-outlined text-[20px]">add</span>
+              <span data-t="addBtn">Add New Log</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- SEARCH, FILTER, SORT BAR -->
+        <div class="flex flex-col md:flex-row gap-4 mb-6">
+          <div class="flex-1 relative">
+            <div
+              class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+            >
+              <span class="material-symbols-outlined text-gray-500 text-[22px]"
+                >search</span
+              >
+            </div>
+            <input
+              type="text"
+              id="log-search"
+              oninput="renderAllLogs()"
+              class="w-full h-12 pl-12 pr-4 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 transition-all dark:text-white"
+              data-t-placeholder="searchPlaceholder"
+              placeholder="Search logs by ID, keyword, or severity..."
+            />
+          </div>
+          <div class="flex gap-2">
+            <div class="relative h-12">
+              <select
+                id="log-filter"
+                onchange="renderAllLogs()"
+                class="h-full pl-10 pr-8 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-emerald-500/20 appearance-none transition-all cursor-pointer"
+              >
+                <option value="all" data-t="allStatus">All Status</option>
+                <option value="report" data-t="statusReport">🟡 Report</option>
+                <option value="todo" data-t="statusTodo">🔵 To Do</option>
+                <option value="progress" data-t="statusProgress">On Progress</option>
+                <option value="done" data-t="statusDone">🟢 Done</option>
+                <option value="reject" data-t="statusReject">🔴 Reject</option>
+              </select>
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-gray-500 pointer-events-none">filter_list</span>
+              <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-[18px] text-gray-400 pointer-events-none">expand_more</span>
+            </div>
+            <div class="relative h-12">
+              <select
+                id="log-sort"
+                onchange="renderAllLogs()"
+                class="h-full pl-10 pr-8 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-emerald-500/20 appearance-none transition-all cursor-pointer"
+              >
+                <option value="newest" data-t="newest">Newest</option>
+                <option value="oldest" data-t="oldest">Oldest</option>
+              </select>
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-gray-500 pointer-events-none">sort</span>
+              <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-[18px] text-gray-400 pointer-events-none">expand_more</span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="flex-1 overflow-hidden bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm rounded-2xl flex flex-col"
+        >
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr
+                  class="border-b border-gray-100 dark:border-gray-800 text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                >
+                  <th class="px-6 py-4" data-t="no">No</th>
+                  <th class="px-6 py-4" data-t="date">Tanggal</th>
+                  <th class="px-6 py-4" data-t="module">Modul</th>
+                  <th class="px-6 py-4" data-t="status">Status</th>
+                  <th class="px-6 py-4" data-t="priority">Prioritas</th>
+                  <th class="px-6 py-4" data-t="reporter">Pelapor</th>
+                  <th class="px-6 py-4 text-right" data-t="action">Aksi</th>
+                </tr>
+              </thead>
+              <tbody
+                id="all-logs-table-body"
+                class="divide-y divide-gray-50 dark:divide-gray-800/50 text-sm"
+              >
+                <!-- Data injected here -->
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- PAGINATION / FOOTER -->
+          <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <p class="text-xs text-gray-500">
+                <span data-t="showing">Showing</span> <span id="pagination-start">1</span> <span data-t="to">to</span> <span id="pagination-end">10</span> <span data-t="of">of</span> <span class="all-logs-total-count">0</span> <span data-t="logs">logs</span>
+              </p>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-gray-500" data-t="rowsPerPage">Rows:</span>
+                <select id="rows-per-page" onchange="changeRowsPerPage(this.value)" class="bg-transparent border-none text-xs font-bold text-gray-500 focus:ring-0 cursor-pointer">
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="changePage('prev')" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-800 text-xs font-bold text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed" id="btn-prev">Previous</button>
+              <button onclick="changePage('next')" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-800 text-xs font-bold text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed" id="btn-next">Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- REPORTS TEMPLATE -->
+    <template id="tpl-reports">
+      <div class="ribbon-container min-h-full">
+        <div class="ribbon-overlay">
+          <div class="ribbon-banner">
+            <span class="ribbon-text">Coming Soon</span>
+            <span class="ribbon-subtext">Fitur ini sedang dalam tahap uji coba sistem</span>
+          </div>
+        </div>
+        <div class="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 opacity-40 grayscale-[0.5]">
+          <!-- Header Reports -->
+        <div
+          class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+        >
+          <div>
+            <h2 data-t="reports" class="text-[#121417] dark:text-white text-3xl font-extrabold">
+              Reports & Analytics Dashboard
+            </h2>
+            <p data-t="reportsDesc" class="text-gray-500 dark:text-gray-400">
+              Visualisasi data temuan dan resolusi sistem.
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div
+              class="flex items-center gap-2 bg-white dark:bg-[#252525] border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-1.5 cursor-pointer"
+            >
+              <span class="material-symbols-outlined text-gray-400 text-sm"
+                >calendar_month</span
+              >
+              <span class="text-sm dark:text-gray-200 font-medium"
+                >Oct 1, 2023 - Oct 31, 2023</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div
+            class="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm"
+          >
+            <p data-t="totalBugs" class="text-gray-500 text-sm font-medium">Total Bugs Reported</p>
+            <div class="flex items-end gap-2 mt-2">
+              <h3 class="text-3xl font-bold dark:text-white">482</h3>
+              <span
+                class="text-emerald-500 text-xs font-bold pb-1.5 flex items-center"
+                ><span class="material-symbols-outlined text-sm"
+                  >trending_up</span
+                >
+                12%</span
+              >
+            </div>
+          </div>
+          <div
+            class="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm"
+          >
+            <p data-t="avgResolution" class="text-gray-500 text-sm font-medium">
+              Avg. Resolution Time
+            </p>
+            <div class="flex items-end gap-2 mt-2">
+              <h3 class="text-3xl font-bold dark:text-white">4.2h</h3>
+              <span
+                class="text-red-500 text-xs font-bold pb-1.5 flex items-center"
+                ><span class="material-symbols-outlined text-sm"
+                  >trending_up</span
+                >
+                8%</span
+              >
+            </div>
+          </div>
+          <div
+            class="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm"
+          >
+            <p data-t="resRate" class="text-gray-500 text-sm font-medium">Resolution Rate</p>
+            <div class="flex items-end gap-2 mt-2">
+              <h3 class="text-3xl font-bold dark:text-white">94.8%</h3>
+              <span
+                class="text-emerald-500 text-xs font-bold pb-1.5 flex items-center"
+                ><span class="material-symbols-outlined text-sm"
+                  >trending_up</span
+                >
+                2.4%</span
+              >
+            </div>
+          </div>
+          <div
+            class="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm"
+          >
+            <p data-t="criticalBugs" class="text-gray-500 text-sm font-medium">Critical Bugs</p>
+            <div class="flex items-end gap-2 mt-2">
+              <h3 class="text-3xl font-bold text-red-600">18</h3>
+              <span
+                class="text-emerald-500 text-xs font-bold pb-1.5 flex items-center"
+                ><span class="material-symbols-outlined text-sm"
+                  >trending_down</span
+                >
+                5%</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div
+          class="bg-white dark:bg-[#1e1e1e] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm"
+        >
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h3 data-t="bugTrends" class="text-lg font-bold dark:text-white">Bug Trends</h3>
+              <p data-t="bugTrendsDesc" class="text-sm text-gray-500">
+                Frequency of reported vs resolved bugs over time
+              </p>
+            </div>
+            <div class="flex gap-4">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                <span data-t="reported" class="text-xs font-medium dark:text-gray-300"
+                  >Reported</span
+                >
+              </div>
+              <div class="flex items-center gap-2">
+                <span
+                  class="w-3 h-3 rounded-full bg-gray-200 dark:bg-gray-700"
+                ></span>
+                <span data-t="resolved" class="text-xs font-medium dark:text-gray-300"
+                  >Resolved</span
+                >
+              </div>
+            </div>
+          </div>
+          <div
+            class="h-64 flex items-end justify-between gap-4 px-2 border-b border-gray-100 dark:border-gray-800 relative"
+          >
+            <div class="flex-1 flex flex-col items-center gap-2 group">
+              <div class="w-full flex justify-center items-end h-full gap-1">
+                <div
+                  class="w-4 bg-emerald-500/80 hover:bg-emerald-500 rounded-t-sm transition-all"
+                  style="height: 40%"
+                ></div>
+                <div
+                  class="w-4 bg-gray-200 dark:bg-gray-700 rounded-t-sm transition-all"
+                  style="height: 30%"
+                ></div>
+              </div>
+              <span data-t="dayMon" class="text-[10px] text-gray-400 font-bold uppercase"
+                >Mon</span
+              >
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-2 group">
+              <div class="w-full flex justify-center items-end h-full gap-1">
+                <div
+                  class="w-4 bg-emerald-500/80 hover:bg-emerald-500 rounded-t-sm transition-all"
+                  style="height: 65%"
+                ></div>
+                <div
+                  class="w-4 bg-gray-200 dark:bg-gray-700 rounded-t-sm transition-all"
+                  style="height: 45%"
+                ></div>
+              </div>
+              <span data-t="dayTue" class="text-[10px] text-gray-400 font-bold uppercase"
+                >Tue</span
+              >
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-2 group">
+              <div class="w-full flex justify-center items-end h-full gap-1">
+                <div
+                  class="w-4 bg-emerald-500/80 hover:bg-emerald-500 rounded-t-sm transition-all"
+                  style="height: 55%"
+                ></div>
+                <div
+                  class="w-4 bg-gray-200 dark:bg-gray-700 rounded-t-sm transition-all"
+                  style="height: 50%"
+                ></div>
+              </div>
+              <span data-t="dayWed" class="text-[10px] text-gray-400 font-bold uppercase"
+                >Wed</span
+              >
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-2 group">
+              <div class="w-full flex justify-center items-end h-full gap-1">
+                <div
+                  class="w-4 bg-emerald-500/80 hover:bg-emerald-500 rounded-t-sm transition-all"
+                  style="height: 80%"
+                ></div>
+                <div
+                  class="w-4 bg-gray-200 dark:bg-gray-700 rounded-t-sm transition-all"
+                  style="height: 60%"
+                ></div>
+              </div>
+              <span data-t="dayThu" class="text-[10px] text-gray-400 font-bold uppercase"
+                >Thu</span
+              >
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-2 group">
+              <div class="w-full flex justify-center items-end h-full gap-1">
+                <div
+                  class="w-4 bg-emerald-500/80 hover:bg-emerald-500 rounded-t-sm transition-all"
+                  style="height: 45%"
+                ></div>
+                <div
+                  class="w-4 bg-gray-200 dark:bg-gray-700 rounded-t-sm transition-all"
+                  style="height: 40%"
+                ></div>
+              </div>
+              <span data-t="dayFri" class="text-[10px] text-gray-400 font-bold uppercase"
+                >Fri</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Secondary Metrics -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div
+            class="bg-white dark:bg-[#1e1e1e] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm"
+          >
+            <h3 data-t="bugsByModule" class="text-lg font-bold dark:text-white mb-6">
+              Bugs by Module
+            </h3>
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="size-3 rounded-full bg-emerald-500"></div>
+                  <span data-t="modStudentPortal" class="text-sm dark:text-gray-300">Student Portal</span>
+                </div>
+                <span class="text-sm font-bold dark:text-white">45%</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="size-3 rounded-full bg-blue-500"></div>
+                  <span data-t="modPaymentGateway" class="text-sm dark:text-gray-300"
+                    >Payment Gateway</span
+                  >
+                </div>
+                <span class="text-sm font-bold dark:text-white">25%</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="size-3 rounded-full bg-amber-500"></div>
+                  <span data-t="modStaffAdmin" class="text-sm dark:text-gray-300">Staff Admin</span>
+                </div>
+                <span class="text-sm font-bold dark:text-white">15%</span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-white dark:bg-[#1e1e1e] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm"
+          >
+            <h3 data-t="severityDist" class="text-lg font-bold dark:text-white mb-6">
+              Severity Distribution
+            </h3>
+            <div class="space-y-4">
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs dark:text-gray-400">
+                  <span data-t="critical">Critical</span><span>18</span>
+                </div>
+                <div
+                  class="h-2 w-full bg-gray-100 dark:bg-gray-800 rounded-full"
+                >
+                  <div
+                    class="h-full bg-red-600 rounded-full"
+                    style="width: 15%"
+                  ></div>
+                </div>
+              </div>
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs dark:text-gray-400">
+                  <span data-t="high">High</span><span>124</span>
+                </div>
+                <div
+                  class="h-2 w-full bg-gray-100 dark:bg-gray-800 rounded-full"
+                >
+                  <div
+                    class="h-full bg-orange-500 rounded-full"
+                    style="width: 45%"
+                  ></div>
+                </div>
+              </div>
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs dark:text-gray-400">
+                  <span data-t="medium">Medium</span><span>210</span>
+                </div>
+                <div
+                  class="h-2 w-full bg-gray-100 dark:bg-gray-800 rounded-full"
+                >
+                  <div
+                    class="h-full bg-blue-500 rounded-full"
+                    style="width: 75%"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Reports -->
+        <div
+          class="flex justify-between items-center py-6 border-t border-gray-100 dark:border-gray-800"
+        >
+          <p data-t="reportGen" class="text-sm text-gray-500 italic">
+            Report generated on Oct 24, 2023 at 09:45 AM
+          </p>
+          <div class="flex gap-4">
+            <button
+              class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#252525] border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-50 dark:text-gray-300 transition-colors"
+            >
+              <span class="material-symbols-outlined text-lg"
+                >picture_as_pdf</span
+              >
+              <span data-t="downloadPdf">Download PDF</span>
+            </button>
+            <button
+              class="flex items-center gap-2 px-4 py-2 bg-emerald-600 dark:bg-brand-green text-white rounded-lg text-sm font-semibold hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-900/20"
+            >
+              <span class="material-symbols-outlined text-lg">share</span> <span data-t="shareReport">Share
+              Report</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </template>
+
+    <!-- TEAM ACCESS TEMPLATE -->
+    <template id="tpl-team">
+      <div class="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+        <div
+          class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+        >
+          <div class="flex flex-col gap-1">
+            <h2
+              data-t="team"
+              class="text-[#121417] dark:text-white text-3xl font-extrabold leading-tight tracking-tight"
+            >
+              Team Access Management
+            </h2>
+            <p data-t="teamDesc" class="text-[#646f82] dark:text-gray-400 text-base font-normal">
+              Manage roles and permissions for the development team.
+            </p>
+          </div>
+          <div class="flex gap-3 role-editor-only">
+            <button
+              onclick="openAddMemberModal()"
+              class="flex items-center justify-center gap-2 h-11 px-5 rounded-lg bg-[#001D1A] dark:bg-brand-green hover:opacity-90 text-white text-sm font-semibold shadow-lg shadow-black/10 transition-all"
+            >
+              <span class="material-symbols-outlined text-[20px]"
+                >person_add</span
+              >
+              <span data-t="addUser">Tambah Anggota</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Search & Filter -->
+        <div
+          class="bg-white dark:bg-[#1e1e1e] p-3 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col md:flex-row gap-3 items-center"
+        >
+          <div class="flex-1 w-full relative group">
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            >
+              <span class="material-symbols-outlined text-gray-500 text-[20px]"
+                >search</span
+              >
+            </div>
+            <input
+              id="team-search"
+              oninput="renderTeamTable()"
+              class="block w-full pl-10 pr-3 py-2 bg-gray-50 dark:bg-[#252525] border-transparent rounded-lg text-sm text-[#121417] dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/10 transition-all"
+              data-t-placeholder="searchTeamPlaceholder"
+              placeholder="Cari anggota tim..."
+              type="text"
+            />
+          </div>
+          <div class="flex gap-2 w-full md:w-auto">
+            <select
+              id="team-role-filter"
+              onchange="renderTeamTable()"
+              class="bg-gray-50 dark:bg-[#252525] border-transparent rounded-lg text-sm text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-emerald-500/10 cursor-pointer min-w-[140px]"
+            >
+              <option value="all" data-t="allRoles">Semua Role</option>
+              <option value="Editor" data-t="editor">Editor</option>
+              <option value="Viewer" data-t="viewer">Viewer</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div
+          class="bg-white dark:bg-[#1e1e1e] rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+        >
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr
+                  class="bg-gray-50 dark:bg-[#252525] border-b border-gray-100 dark:border-gray-800"
+                >
+                  <th
+                    data-t="name"
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                  >
+                    Nama
+                  </th>
+                  <th
+                    data-t="email"
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                  >
+                    Email
+                  </th>
+                  <th
+                    data-t="role"
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                  >
+                    Role
+                  </th>
+                  <th
+                    data-t="lastActive"
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                  >
+                    Terakhir Aktif
+                  </th>
+                  <th
+                    data-t="action"
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right"
+                  >
+                    Aksi
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="team-table-body" class="divide-y divide-gray-100 dark:divide-gray-800">
+                <!-- Data injected here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- SETTINGS TEMPLATE -->
+    <template id="tpl-settings">
+      <div
+        class="max-w-4xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-300"
+      >
+        <div>
+          <h1 data-t="settings" class="text-2xl font-extrabold text-[#121417] dark:text-white">
+            Settings
+          </h1>
+          <p data-t="settingsDesc" class="text-gray-500 dark:text-gray-400 mt-1">
+            Manage your application preferences and configuration.
+          </p>
+        </div>
+
+        <section
+          class="bg-white dark:bg-[#1c1f26] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+        >
+          <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800">
+            <h3
+              data-t="generalInfo"
+              class="text-lg font-bold text-[#121417] dark:text-white flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined text-gray-400">info</span>
+              General Information
+            </h3>
+          </div>
+          <div class="p-6">
+            <div class="max-w-sm">
+              <label
+                data-t="appNameLabel"
+                class="block text-sm font-semibold text-[#121417] dark:text-white mb-2"
+                for="app-name-input"
+                >Log Name / Project Title</label
+              >
+              <div class="flex gap-2">
+                <input
+                  id="app-name-input"
+                  type="text"
+                  class="flex-1 bg-gray-100 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 text-sm text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                  data-t-placeholder="appNamePlaceholder"
+                  placeholder="Log Name..."
+                  readonly
+                />
+                <button
+                  onclick="saveAppName()"
+                  data-t="update"
+                  class="bg-emerald-600 dark:bg-brand-green text-white px-4 py-2 rounded-lg text-sm font-bold role-editor-only"
+                >
+                  Update
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Appearance Section -->
+        <section
+          class="bg-white dark:bg-[#1c1f26] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+        >
+          <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800">
+            <h3
+              data-t="appearance"
+              class="text-lg font-bold text-[#121417] dark:text-white flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined text-gray-400"
+                >palette</span
+              >
+              Appearance
+            </h3>
+          </div>
+          <div class="p-6 space-y-6">
+            <div class="flex items-center justify-between">
+              <div class="flex flex-col">
+                <span
+                  data-t="interfaceTheme"
+                  class="text-sm font-semibold text-[#121417] dark:text-white"
+                  >Interface Theme</span
+                >
+                <span data-t="themeDesc" class="text-xs text-gray-500 dark:text-gray-400"
+                  >Customize how the application looks to you.</span
+                >
+              </div>
+              <div
+                class="flex items-center p-1 bg-gray-100 dark:bg-gray-800 rounded-lg"
+              >
+                <button
+                  onclick="document.documentElement.classList.remove('dark')"
+                  data-t="lightMode"
+                  class="flex items-center gap-2 px-3 py-1.5 rounded-md bg-white dark:bg-transparent dark:text-gray-400 text-sm font-medium text-gray-900 shadow-sm transition-all"
+                >
+                  <span class="material-symbols-outlined text-[18px]"
+                    >light_mode</span
+                  >
+                  Light
+                </button>
+                <button
+                  onclick="document.documentElement.classList.add('dark')"
+                  data-t="darkMode"
+                  class="flex items-center gap-2 px-3 py-1.5 rounded-md text-gray-500 dark:bg-gray-700 dark:text-white hover:text-gray-900 text-sm font-medium transition-all"
+                >
+                  <span class="material-symbols-outlined text-[18px]"
+                    >dark_mode</span
+                  >
+                  Dark
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Language Section -->
+        <section
+          class="bg-white dark:bg-[#1c1f26] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+        >
+          <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800">
+            <h3
+              data-t="language"
+              class="text-lg font-bold text-[#121417] dark:text-white flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined text-gray-400"
+                >translate</span
+              >
+              Language
+            </h3>
+          </div>
+          <div class="p-6">
+            <div class="max-w-xs">
+              <label
+                data-t="selectLanguage"
+                class="block text-sm font-semibold text-[#121417] dark:text-white mb-2"
+                for="language"
+                >Select Language</label
+              >
+              <div class="relative">
+                <select
+                  class="w-full bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-lg py-2.5 pl-3 pr-10 text-sm text-gray-900 dark:text-white appearance-none"
+                  id="language"
+                >
+                  <option value="en">English (United States)</option>
+                  <option selected value="id">Bahasa Indonesia</option>
+                  <option value="ar">Arabic (العربية)</option>
+                </select>
+                <div
+                  class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400"
+                >
+                  <span class="material-symbols-outlined text-[20px]"
+                    >expand_more</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Help & Support Section -->
+        <section
+          class="bg-white dark:bg-[#1c1f26] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+        >
+          <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800">
+            <h3
+              data-t="helpSupport"
+              class="text-lg font-bold text-[#121417] dark:text-white flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined text-gray-400">help</span>
+              Help & Support
+            </h3>
+          </div>
+          <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <a
+              class="flex items-center gap-4 p-4 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-emerald-500/50 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-all group"
+              href="#"
+            >
+              <div
+                class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400 group-hover:bg-emerald-100 transition-colors"
+              >
+                <span class="material-symbols-outlined">menu_book</span>
+              </div>
+              <div>
+                <p data-t="documentation" class="text-sm font-bold text-[#121417] dark:text-white">
+                  Documentation
+                </p>
+                <p data-t="documentationDesc" class="text-xs text-gray-500 dark:text-gray-400">
+                  Read guides and API references
+                </p>
+              </div>
+            </a>
+            <a
+              class="flex items-center gap-4 p-4 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-emerald-500/50 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-all group"
+              href="#"
+            >
+              <div
+                class="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-purple-600 dark:text-purple-400 group-hover:bg-emerald-100 transition-colors"
+              >
+                <span class="material-symbols-outlined">contact_support</span>
+              </div>
+              <div>
+                <p data-t="contactSupport" class="text-sm font-bold text-[#121417] dark:text-white">
+                  Contact Support
+                </p>
+                <p data-t="supportDesc" class="text-xs text-gray-500 dark:text-gray-400">
+                  Get help with technical issues
+                </p>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <!-- Footer Actions -->
+        <div class="flex flex-col gap-6 pt-4">
+          <div class="flex justify-center">
+            <button
+              onclick="window.location.href = 'index.html'"
+              data-t="logout"
+              class="flex items-center gap-2 px-10 py-3 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-400 font-bold hover:bg-red-100 dark:hover:bg-red-900/30 transition-all group"
+            >
+              <span
+                class="material-symbols-outlined group-hover:scale-110 transition-transform"
+                >logout</span
+              >
+              Log Out of System
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- ADD LOG TEMPLATE -->
+    <template id="tpl-add-log">
+      <div
+        class="max-w-5xl mx-auto animate-in slide-in-from-top-4 duration-300"
+      >
+        <button
+          onclick="navigateTo('dashboard')"
+          class="flex items-center gap-2 text-sm text-gray-500 hover:text-primary mb-6"
+        >
+          <span class="material-symbols-outlined text-sm">arrow_back</span>
+          <span data-t="backToDashboard">Kembali ke Dashboard</span>
+        </button>
+        <form
+          onsubmit="event.preventDefault(); saveNewLog();"
+          class="space-y-8 bg-white dark:bg-[#1e1e1e] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+        >
+          <div
+            class="bg-gray-50 dark:bg-[#252525] px-8 py-6 border-b border-gray-200 dark:border-gray-800"
+          >
+            <h3 data-t="newLogForm" class="text-lg font-bold dark:text-white">
+              Formulir Log Bug Baru
+            </h3>
+            <p data-t="newLogFormDesc" class="text-sm text-gray-500">
+              Isi detail lengkap bug untuk membantu tim pengembang.
+            </p>
+          </div>
+          <div class="p-8 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="space-y-2">
+                <label data-t="reportNo" class="text-sm font-semibold dark:text-gray-300"
+                  >No. Laporan</label
+                >
+                <input
+                  id="add-no-lap"
+                  type="number"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                  data-t-placeholder="autoPlaceholder"
+                  placeholder="Otomatis"
+                  readonly
+                />
+              </div>
+              <div class="space-y-2">
+                <label data-t="version" class="text-sm font-semibold dark:text-gray-300"
+                  >Versi</label
+                >
+                <input
+                  id="add-versi"
+                  type="text"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                  data-t-placeholder="versionPlaceholder"
+                  placeholder="v2.4.2"
+                  required
+                />
+              </div>
+              <div class="space-y-2">
+                <label data-t="foundDate" class="text-sm font-semibold dark:text-gray-300"
+                  >Tanggal Temuan</label
+                >
+                <input
+                  id="add-tanggal"
+                  type="datetime-local"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                  required
+                />
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label data-t="moduleArea" class="text-sm font-semibold dark:text-gray-300"
+                  >Modul / Area</label
+                >
+                <input
+                  id="add-modul"
+                  type="text"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                  data-t-placeholder="modulePlaceholder"
+                  placeholder="Contoh: Modul Pembayaran"
+                  required
+                />
+              </div>
+              <div class="space-y-2">
+                <label data-t="priority" class="text-sm font-semibold dark:text-gray-300"
+                  >Priority</label
+                >
+                <select
+                  id="add-priority"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                >
+                  <option data-t="lowPriority" value="low">🟡 Rendah</option>
+                  <option data-t="mediumPriority" value="medium" selected>🟠 Sedang</option>
+                  <option data-t="highPriority" value="high">🔴 Tinggi</option>
+                  <option data-t="prioCritical" value="critical">🔥 Kritikal</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label data-t="actualResult" class="text-sm font-semibold dark:text-gray-300"
+                  >Hasil Aktual</label
+                >
+                <textarea
+                  id="add-aktual"
+                  rows="4"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                  data-t-placeholder="actualPlaceholder"
+                  placeholder="Jelaskan apa yang sebenarnya terjadi..."
+                  required
+                ></textarea>
+              </div>
+              <div class="space-y-2">
+                <label data-t="expectedResult" class="text-sm font-semibold dark:text-gray-300"
+                  >Harapan</label
+                >
+                <textarea
+                  id="add-harapan"
+                  rows="4"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                  data-t-placeholder="expectedPlaceholder"
+                  placeholder="Jelaskan apa yang seharusnya terjadi..."
+                  required
+                ></textarea>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-6">
+                <div class="space-y-2">
+                  <label data-t="status" class="text-sm font-semibold dark:text-gray-300"
+                    >Status</label
+                  >
+                  <select
+                    id="add-status"
+                    class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                  >
+                    <option data-t="statusReport" value="report">🟡 Report</option>
+                    <option data-t="statusTodo" value="todo">🔵 To Do</option>
+                    <option data-t="statusProgress" value="progress">🟣 On Progress</option>
+                    <option data-t="statusDone" value="done">🟢 Done</option>
+                    <option data-t="statusReject" value="reject">🔴 Reject</option>
+                  </select>
+                </div>
+                <div class="space-y-2">
+                  <label data-t="attachmentLabel" class="text-sm font-semibold dark:text-gray-300"
+                    >Lampiran (Link G-Drive/Image)</label
+                  >
+                  <input
+                    id="add-lampiran"
+                    type="url"
+                    class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                    data-t-placeholder="urlPlaceholder"
+                    placeholder="https://..."
+                  />
+                </div>
+              </div>
+              <div class="space-y-2">
+                <label data-t="severity" class="text-sm font-semibold dark:text-gray-300"
+                  >Tingkat Keparahan</label
+                >
+                <textarea
+                  id="add-severity"
+                  rows="6"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                  placeholder="Jelaskan tingkat keparahan yang akan dicatatkan..."
+                ></textarea>
+              </div>
+            </div>
+            <div
+              class="flex justify-end gap-3 pt-6 border-t border-gray-100 dark:border-gray-800"
+            >
+              <button
+                type="button"
+                onclick="navigateTo('dashboard')"
+                data-t="cancelBtn"
+                class="px-6 py-2.5 rounded-lg border border-gray-200 dark:text-white text-sm font-semibold hover:bg-gray-50 transition-all"
+              >
+                Batal
+              </button>
+              <button
+                type="submit"
+                data-t="saveLogBtn"
+                class="px-8 py-2.5 rounded-lg bg-[var(--sidebar-color)] text-white text-sm font-semibold shadow-lg hover:opacity-90 transition-all"
+              >
+                Simpan Log Bug
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </template>
+
+    <!-- IMPORT LOG TEMPLATE -->
+    <template id="tpl-import-log">
+      <div class="max-w-4xl mx-auto animate-in zoom-in-95 duration-300">
+        <div class="flex flex-col gap-1 mb-6">
+          <button
+            onclick="navigateTo('dashboard')"
+            class="flex items-center gap-2 text-sm text-gray-500 hover:text-primary mb-2"
+          >
+            <span class="material-symbols-outlined text-sm">arrow_back</span>
+            <span data-t="back">Kembali</span>
+          </button>
+          <h1 data-t="importLogHeader" class="text-[#121417] dark:text-white text-3xl font-extrabold">
+            Import File Log
+          </h1>
+          <p data-t="importLogDesc" class="text-gray-500">
+            Unggah file .xlsx atau .csv untuk memproses log massal.
+          </p>
+        </div>
+
+        <div
+          class="bg-white dark:bg-[#1e1e1e] rounded-2xl p-8 text-center border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-emerald-500 transition-all group"
+        >
+          <div
+            class="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"
+          >
+            <span class="material-symbols-outlined text-emerald-600 text-3xl"
+              >upload_file</span
+            >
+          </div>
+          <h3 data-t="chooseFile" class="text-lg font-bold dark:text-white mb-2">
+            Pilih file untuk diunggah
+          </h3>
+          <p data-t="dragDrop" class="text-sm text-gray-500 mb-6">
+            Seret dan lepas file di sini, atau klik tombol di bawah
+          </p>
+          <div class="flex justify-center gap-3">
+            <button
+              data-t="selectFile"
+              class="px-6 py-2 bg-[var(--sidebar-color)] text-white rounded-lg text-sm font-semibold shadow-md"
+            >
+              Pilih File
+            </button>
+            <button
+              data-t="downloadTemplate"
+              class="px-6 py-2 border border-gray-200 dark:text-white rounded-lg text-sm font-semibold"
+            >
+              Download Template
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- LOG DETAIL / FORUM TEMPLATE -->
+    <template id="tpl-log-detail">
+      <div
+        class="max-w-7xl mx-auto space-y-6 animate-in slide-in-from-right-4 duration-300"
+      >
+        <!-- Back Button -->
+        <div class="flex items-center justify-between">
+          <button
+            onclick="navigateTo('dashboard')"
+            class="flex items-center gap-2 text-sm text-gray-500 hover:text-emerald-600 transition-colors"
+          >
+            <span class="material-symbols-outlined text-sm">arrow_back</span>
+            <span data-t="back">Kembali</span>
+          </button>
+          <div id="detail-actions" class="role-editor-only">
+            <!-- Dynamic edit button injected here -->
+          </div>
+        </div>
+
+        <!-- Log Summary Header Card -->
+        <div
+          class="bg-white dark:bg-[#1e1e1e] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+        >
+          <div
+            class="bg-gray-50 dark:bg-[#252525] px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex flex-wrap items-center gap-4"
+          >
+            <div class="flex items-center gap-3 mr-auto">
+              <span id="detail-id" class="text-xl font-black text-emerald-600"
+                >#---</span
+              >
+              <h2 id="detail-module" class="text-xl font-bold dark:text-white">
+                ---
+              </h2>
+            </div>
+            <div
+              id="detail-status"
+              class="px-3 py-1 rounded-full text-xs font-bold uppercase"
+            >
+              ---
+            </div>
+          </div>
+          <div
+            class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 border-b border-gray-100 dark:border-gray-800"
+          >
+            <div class="space-y-1">
+              <p
+                data-t="systemVersion"
+                class="text-[10px] uppercase tracking-widest text-gray-400 font-bold"
+              >
+                Versi Sistem
+              </p>
+              <p
+                id="detail-version"
+                class="text-sm font-semibold dark:text-gray-200"
+              >
+                ---
+              </p>
+            </div>
+            <div class="space-y-1">
+              <p
+                data-t="foundDate"
+                class="text-[10px] uppercase tracking-widest text-gray-400 font-bold"
+              >
+                Tanggal Ditemukan
+              </p>
+              <p
+                id="detail-date"
+                class="text-sm font-semibold dark:text-gray-200"
+              >
+                ---
+              </p>
+            </div>
+            <div class="space-y-1">
+              <p
+                data-t="reporter"
+                class="text-[10px] uppercase tracking-widest text-gray-400 font-bold"
+              >
+                Pelapor
+              </p>
+              <div class="flex items-center gap-2">
+                <div
+                  class="size-6 rounded-full bg-emerald-500 text-[10px] flex items-center justify-center text-white font-bold"
+                >
+                  AF
+                </div>
+                <p
+                  id="detail-reporter"
+                  class="text-sm font-semibold dark:text-gray-200"
+                >
+                  ---
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Tingkat Keparahan Section -->
+          <div class="px-6 pt-6">
+            <div class="space-y-3 p-4 bg-orange-50/30 dark:bg-orange-900/10 rounded-xl border border-orange-100 dark:border-orange-900/20">
+              <h4 data-t="severity" class="text-xs font-bold text-orange-600 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">warning</span>
+                Tingkat Keparahan
+              </h4>
+              <p id="detail-severity" class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed italic">
+                ---
+              </p>
+            </div>
+          </div>
+
+          <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div
+              class="space-y-3 p-4 bg-red-50/30 dark:bg-red-900/10 rounded-xl border border-red-100 dark:border-red-900/20"
+            >
+              <h4
+                data-t="actualResult"
+                class="text-xs font-bold text-red-600 flex items-center gap-2"
+              >
+                <span class="material-symbols-outlined text-sm">error</span>
+                Hasil Aktual
+              </h4>
+              <p
+                id="detail-actual"
+                class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed italic"
+              >
+                ---
+              </p>
+            </div>
+            <div
+              class="space-y-3 p-4 bg-emerald-50/30 dark:bg-emerald-900/10 rounded-xl border border-emerald-100 dark:border-emerald-900/20"
+            >
+              <h4
+                data-t="expectedResult"
+                class="text-xs font-bold text-emerald-600 flex items-center gap-2"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >check_circle</span
+                >
+                Hasil yang Diharapkan
+              </h4>
+              <p
+                id="detail-expected"
+                class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed italic"
+              >
+                ---
+              </p>
+            </div>
+          </div>
+          <div
+            class="px-6 py-4 bg-gray-50/50 dark:bg-[#252525]/50 flex items-center justify-between border-t border-gray-200 dark:border-gray-800"
+          >
+            <div class="flex items-center gap-2 text-sm text-gray-500">
+              <span class="material-symbols-outlined text-sm">attachment</span>
+              <span data-t="attachmentEvidence">Lampiran Bukti:</span>
+              <a
+                id="detail-attachment"
+                href="#"
+                target="_blank"
+                data-t="viewAttachment"
+                class="text-blue-500 font-medium hover:underline"
+                >Lihat Lampiran</a
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- FORUM / DISCUSSION AREA -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Comments Column -->
+          <div class="lg:col-span-2 space-y-4">
+            <div class="flex items-center gap-2 mb-2">
+              <h3 data-t="discussionForum" class="text-lg font-bold dark:text-white">Forum Diskusi</h3>
+              <span
+                id="comment-count-badge"
+                class="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-md text-[10px] font-bold dark:text-gray-300"
+                >0 Pesan</span
+              >
+            </div>
+
+            <div id="discussion-bubbles" class="space-y-6 flex flex-col">
+              <!-- Messages injected here -->
+            </div>
+
+            <!-- Comment Input -->
+            <div
+              class="bg-white dark:bg-[#1e1e1e] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm mt-8"
+            >
+              <div class="flex gap-4">
+                <div
+                  class="size-10 rounded-full bg-[var(--sidebar-color)] shrink-0 flex items-center justify-center text-white font-bold text-sm"
+                >
+                  AF
+                </div>
+                <div class="flex-1 space-y-3">
+                  <textarea
+                    id="comment-input"
+                    rows="3"
+                    class="w-full bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700 rounded-xl text-sm dark:text-white focus:ring-emerald-500 p-3"
+                    data-t-placeholder="commentPlaceholder"
+                    placeholder="Tuliskan komentar atau instruksi untuk tim..."
+                  ></textarea>
+                  <div class="flex justify-end gap-2">
+                    <button
+                      class="p-2 text-gray-400 hover:text-emerald-500 transition-colors"
+                    >
+                      <span class="material-symbols-outlined">attachment</span>
+                    </button>
+                    <button
+                      onclick="postComment()"
+                      data-t="sendComment"
+                      class="bg-emerald-600 dark:bg-brand-green hover:bg-emerald-500 text-white px-6 py-2 rounded-lg text-sm font-bold shadow-lg shadow-emerald-900/20 transition-all"
+                    >
+                      Kirim Komentar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sidebar Log Activity -->
+          <div class="space-y-6">
+            <div
+              class="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm"
+            >
+              <h3
+                data-t="activityHistory"
+                class="text-sm font-bold dark:text-white mb-4 flex items-center gap-2"
+              >
+                <span class="material-symbols-outlined text-sm">history</span>
+                Riwayat Aktivitas
+              </h3>
+              <div
+                id="activity-history-list"
+                class="space-y-6 relative before:absolute before:inset-0 before:left-3 before:border-l-2 before:border-gray-100 dark:before:border-gray-800"
+              >
+                <!-- Activities injected here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- EDIT LOG TEMPLATE -->
+    <template id="tpl-edit-log">
+      <div
+        class="max-w-5xl mx-auto animate-in slide-in-from-top-4 duration-300"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <button
+            onclick="navigateTo('all-logs')"
+            class="flex items-center gap-2 text-sm text-gray-500 hover:text-emerald-600 transition-colors"
+          >
+            <span class="material-symbols-outlined text-sm">arrow_back</span>
+            <span data-t="back">Kembali</span>
+          </button>
+          <h2
+            id="edit-header-title"
+            class="text-lg font-bold dark:text-white uppercase tracking-wider"
+          >
+            Edit Log #---
+          </h2>
+        </div>
+
+        <form
+          id="edit-log-form"
+          onsubmit="
+            event.preventDefault();
+            saveLogUpdate();
+          "
+          class="space-y-8 bg-white dark:bg-[#1e1e1e] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+        >
+          <div
+            class="bg-gray-50 dark:bg-[#252525] px-8 py-6 border-b border-gray-200 dark:border-gray-800"
+          >
+            <h3 data-t="modifyLogData" class="text-lg font-bold dark:text-white">
+              Modifikasi Data Log
+            </h3>
+            <p data-t="modifyLogDesc" class="text-sm text-gray-500">
+              Perbarui informasi laporan temuan bug di bawah ini.
+            </p>
+          </div>
+          <div class="p-8 space-y-6">
+            <input type="hidden" id="edit-log-id-internal" />
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="space-y-2">
+                <label data-t="reportNo" class="text-sm font-semibold dark:text-gray-300"
+                  >No. Laporan</label
+                >
+                <input
+                  id="edit-no-lap"
+                  type="number"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                  readonly
+                />
+              </div>
+              <div class="space-y-2">
+                <label data-t="version" class="text-sm font-semibold dark:text-gray-300"
+                  >Versi</label
+                >
+                <input
+                  id="edit-versi"
+                  type="text"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                />
+              </div>
+              <div class="space-y-2">
+                <label data-t="foundDate" class="text-sm font-semibold dark:text-gray-300"
+                  >Tanggal Temuan</label
+                >
+                <input
+                  id="edit-tanggal"
+                  type="datetime-local"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                />
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="space-y-2">
+                <label data-t="moduleArea" class="text-sm font-semibold dark:text-gray-300"
+                  >Modul / Area</label
+                >
+                <input
+                  id="edit-modul"
+                  type="text"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                />
+              </div>
+              <div class="space-y-2">
+                <label data-t="priority" class="text-sm font-semibold dark:text-gray-300"
+                  >Priority</label
+                >
+                <select
+                  id="edit-priority"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                >
+                  <option data-t="lowPriority" value="low">🟡 Rendah</option>
+                  <option data-t="mediumPriority" value="medium">🟠 Sedang</option>
+                  <option data-t="highPriority" value="high">🔴 Tinggi</option>
+                  <option data-t="prioCritical" value="critical">🔥 Kritikal</option>
+                </select>
+              </div>
+              <div class="space-y-2">
+                <label data-t="reporter" class="text-sm font-semibold dark:text-gray-300"
+                  >Pelapor</label
+                >
+                <input
+                  id="edit-pelapor"
+                  type="text"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white bg-gray-50 cursor-not-allowed"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label data-t="actualResult" class="text-sm font-semibold dark:text-gray-300"
+                  >Hasil Aktual</label
+                >
+                <textarea
+                  id="edit-aktual"
+                  rows="4"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                ></textarea>
+              </div>
+              <div class="space-y-2">
+                <label data-t="expectedResult" class="text-sm font-semibold dark:text-gray-300"
+                  >Harapan</label
+                >
+                <textarea
+                  id="edit-harapan"
+                  rows="4"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                ></textarea>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-6">
+                <div class="space-y-2">
+                  <label data-t="status" class="text-sm font-semibold dark:text-gray-300"
+                    >Status</label
+                  >
+                  <select
+                    id="edit-status"
+                    class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                  >
+                    <option data-t="statusReport" value="report">🟡 Report</option>
+                    <option data-t="statusTodo" value="todo">🔵 To Do</option>
+                    <option data-t="statusProgress" value="progress">🟣 On Progress</option>
+                    <option data-t="statusDone" value="done">🟢 Done</option>
+                    <option data-t="statusReject" value="reject">🔴 Reject</option>
+                  </select>
+                </div>
+                <div class="space-y-2">
+                  <label data-t="attachmentLink" class="text-sm font-semibold dark:text-gray-300"
+                    >Link Lampiran</label
+                  >
+                  <input
+                    id="edit-lampiran"
+                    type="url"
+                    class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                  />
+                </div>
+              </div>
+              <div class="space-y-2">
+                <label data-t="severity" class="text-sm font-semibold dark:text-gray-300"
+                  >Tingkat Keparahan</label
+                >
+                <textarea
+                  id="edit-severity"
+                  rows="6"
+                  class="w-full rounded-lg border-gray-200 dark:bg-[#252525] dark:border-gray-700 dark:text-white"
+                  placeholder="Jelaskan tingkat keparahan yang akan dicatatkan..."
+                ></textarea>
+              </div>
+            </div>
+            <div
+              class="flex justify-end gap-3 pt-6 border-t border-gray-100 dark:border-gray-800"
+            >
+              <button
+                type="button"
+                onclick="navigateTo('all-logs')"
+                data-t="cancelBtn"
+                class="px-6 py-2.5 rounded-lg border border-gray-200 dark:text-white text-sm font-semibold hover:bg-gray-50 transition-all"
+              >
+                Batal
+              </button>
+              <button
+                type="submit"
+                data-t="saveChangesBtn"
+                class="px-8 py-2.5 rounded-lg bg-emerald-600 dark:bg-brand-green text-white text-sm font-bold shadow-lg shadow-emerald-900/20 hover:bg-emerald-500 transition-all"
+              >
+                Simpan Perubahan
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </template>
+
+    <!-- POPUP NOTIFICATION MODAL -->
+    <div
+      id="popup-modal"
+      class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300"
+    >
+      <div
+        class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-8 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col items-center text-center"
+      >
+        <div
+          class="size-16 rounded-full bg-emerald-500/20 flex items-center justify-center mb-6"
+        >
+          <div
+            class="size-12 rounded-full bg-emerald-500 flex items-center justify-center text-white"
+          >
+            <span class="material-symbols-outlined text-3xl">check</span>
+          </div>
+        </div>
+        <h3
+          id="popup-title"
+          class="text-xl font-bold text-white mb-2"
+          data-t="alertLogUpdated"
+        >
+          Log Berhasil Ditambahkan
+        </h3>
+        <p
+          id="popup-desc"
+          class="text-gray-400 text-sm mb-8 leading-relaxed"
+        >
+          Data bug baru telah berhasil disimpan ke dalam sistem pelacakan Pesantren Smart Digital.
+        </p>
+        <div class="flex flex-col w-full gap-3">
+          <button
+            id="popup-primary-btn"
+            class="w-full h-12 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center justify-center gap-2 transition-all"
+          >
+            <span class="material-symbols-outlined text-xl">visibility</span>
+            <span data-t="viewLogDetail">Lihat Log</span>
+          </button>
+          <button
+            onclick="closePopup()"
+            class="w-full py-2 text-gray-500 hover:text-white text-sm font-medium transition-colors"
+            data-t="close"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEAM ACCESS MODAL (ADD/EDIT) -->
+    <div
+      id="team-modal-overlay"
+      class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden"
+    >
+      <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+      <div
+        class="relative bg-white dark:bg-[#1e1e1e] w-full max-w-lg rounded-2xl shadow-2xl shadow-black/20 overflow-hidden transform transition-all animate-in fade-in zoom-in duration-300 border border-gray-200 dark:border-gray-800"
+      >
+        <div
+          class="flex items-center justify-between px-8 py-6 border-b border-gray-100 dark:border-gray-800"
+        >
+          <div>
+            <h3
+              id="team-modal-title"
+              data-t="addMemberHeader"
+              class="text-xl font-bold text-slate-900 dark:text-white"
+            >
+              Tambah Anggota Tim
+            </h3>
+            <p
+              id="team-modal-sub"
+              data-t="addMemberSub"
+              class="text-xs text-slate-500 dark:text-slate-400 mt-0.5"
+            >
+              Berikan akses ke anggota baru untuk bergabung.
+            </p>
+          </div>
+          <button
+            class="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-slate-600 transition-all"
+            onclick="closeTeamModal()"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <form id="team-form" class="p-8 space-y-6" onsubmit="saveTeamMember(event)">
+          <input type="hidden" id="member-id" value="" />
+          <div class="space-y-5">
+            <div>
+              <label
+                data-t="fullName"
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5"
+                >Nama Lengkap</label
+              >
+              <div class="relative">
+                <span
+                  class="material-symbols-outlined absolute left-3 top-3 text-slate-400 text-[20px]"
+                  >person</span
+                >
+                <input
+                  id="member-name"
+                  required
+                  class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-[#121417] dark:text-white focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
+                  placeholder="Masukkan nama lengkap"
+                  type="text"
+                />
+              </div>
+            </div>
+            <div>
+              <label
+                data-t="emailAddress"
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5"
+                >Alamat Email</label
+              >
+              <div class="relative">
+                <span
+                  class="material-symbols-outlined absolute left-3 top-3 text-slate-400 text-[20px]"
+                  >mail</span
+                >
+                <input
+                  id="member-email"
+                  required
+                  class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-[#121417] dark:text-white focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
+                  placeholder="contoh@pesantren.digital"
+                  type="email"
+                />
+              </div>
+            </div>
+            <div id="password-field-container">
+              <label
+                data-t="password"
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5"
+                >Kata Sandi</label
+              >
+              <div class="relative">
+                <span
+                  class="material-symbols-outlined absolute left-3 top-3 text-slate-400 text-[20px]"
+                  >lock</span
+                >
+                <input
+                  id="member-password"
+                  class="w-full pl-10 pr-12 py-3 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-[#121417] dark:text-white focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
+                  placeholder="••••••••"
+                  type="password"
+                />
+                <button
+                  class="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+                  type="button"
+                  onclick="toggleTeamPassword()"
+                >
+                  <span id="pass-icon" class="material-symbols-outlined text-[20px]"
+                    >visibility</span
+                  >
+                </button>
+              </div>
+            </div>
+            <div>
+              <label
+                data-t="selectRole"
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3"
+                >Pilih Role Akses</label
+              >
+              <div class="grid grid-cols-2 gap-4">
+                <label
+                  id="label-editor"
+                  class="relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-emerald-500 rounded-xl cursor-pointer ring-2 ring-emerald-500/10"
+                >
+                  <input
+                    id="role-editor"
+                    checked
+                    class="sr-only"
+                    name="member-role"
+                    type="radio"
+                    value="Editor"
+                    onchange="updateRoleUI()"
+                  />
+                  <div class="flex items-center justify-between mb-2">
+                    <span
+                      data-t="editor"
+                      class="text-xs font-bold uppercase tracking-wider text-emerald-600"
+                      >Editor</span
+                    >
+                    <div
+                      id="circle-editor"
+                      class="w-5 h-5 rounded-full border-4 border-emerald-500 bg-white flex items-center justify-center"
+                    ></div>
+                  </div>
+                  <p
+                    data-t="editorDesc"
+                    class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed"
+                  >
+                    Bisa menambah dan mengedit log sistem.
+                  </p>
+                </label>
+                <label
+                  id="label-viewer"
+                  class="relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700 rounded-xl cursor-pointer transition-all"
+                >
+                  <input
+                    id="role-viewer"
+                    class="sr-only"
+                    name="member-role"
+                    type="radio"
+                    value="Viewer"
+                    onchange="updateRoleUI()"
+                  />
+                  <div class="flex items-center justify-between mb-2">
+                    <span
+                      data-t="viewer"
+                      class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500"
+                      >Viewer</span
+                    >
+                    <div
+                      id="circle-viewer"
+                      class="w-5 h-5 rounded-full border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e1e1e]"
+                    ></div>
+                  </div>
+                  <p
+                    data-t="viewerDesc"
+                    class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed"
+                  >
+                    Hanya bisa melihat dan memberi komentar.
+                  </p>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-3 pt-2">
+            <button
+              class="flex-1 py-3 px-4 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all"
+              onclick="closeTeamModal()"
+              type="button"
+              data-t="cancel"
+            >
+              Batal
+            </button>
+            <button
+              class="flex-1 py-3 px-4 text-sm font-semibold bg-[#001D1A] dark:bg-brand-green text-white hover:opacity-90 rounded-xl transition-all shadow-lg shadow-black/10"
+              type="submit"
+              data-t="saveAccess"
+            >
+              Simpan Akses
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // APP STATE
+      let currentUser = null;
+      let currentUserRole = "Viewer"; 
+      let currentAppName = localStorage.getItem('app_name') || "Pesantren Smart Digital";
+      let currentLanguage = "id";
+      let currentProjectId = localStorage.getItem('project_id') || null;
+
+      let teamMembers = [];
+      // let logs = [];
+      // let comments = [];
+
+      async function checkAuth() {
+        // Tunggu sampai supabaseClient siap
+        while (typeof supabaseClient === 'undefined' || !supabaseClient) {
+          console.warn('Waiting for supabaseClient in checkAuth...');
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+        if (error || !session) {
+          window.location.href = 'index.html';
+          return;
+        }
+
+        const { data: profile, error: profileError } = await supabaseClient
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        if (profileError || !profile) {
+          console.error('Profile not found:', profileError);
+          return;
+        }
+
+        currentUser = profile;
+        currentUserRole = profile.role;
+        updateSidebarProfile();
+
+        // Update last active
+        await supabaseClient
+          .from('profiles')
+          .update({ last_active: new Date().toISOString() })
+          .eq('id', currentUser.id);
+
+        // Try to get or create a default project
+        await fetchProjectInfo();
+      }
+
+      async function fetchProjectInfo() {
+        try {
+          // Check if supabaseClient is ready
+          while (typeof supabaseClient === 'undefined') {
+            console.warn('Supabase client not initialized yet (project). Waiting...');
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+
+          const { data: projects, error } = await supabaseClient
+            .from('projects')
+            .select('*')
+            .limit(1);
+
+          if (error) {
+            console.warn('Projects table might not exist or error:', error.message);
+            // Retry on network error
+            if (error.message.includes('fetch')) {
+              await new Promise(resolve => setTimeout(resolve, 2000));
+              return fetchProjectInfo();
+            }
+            return;
+          }
+
+          if (projects && projects.length > 0) {
+            currentProjectId = projects[0].id;
+            currentAppName = projects[0].name;
+            localStorage.setItem('project_id', currentProjectId);
+            localStorage.setItem('app_name', currentAppName);
+            updateAppNameUI();
+          } else {
+            const { data: newProject, error: insertError } = await supabaseClient
+              .from('projects')
+              .insert([{ name: currentAppName }])
+              .select()
+              .single();
+            
+            if (!insertError && newProject) {
+              currentProjectId = newProject.id;
+              localStorage.setItem('project_id', currentProjectId);
+            }
+          }
+        } catch (err) {
+          console.error('Error in fetchProjectInfo:', err.message);
+          // Retry on network error
+          if (err.message.includes('fetch')) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            return fetchProjectInfo();
+          }
+        }
+      }
+
+      function updateSidebarProfile() {
+        if (!currentUser) return;
+        
+        const avatarEl = document.getElementById("sidebar-user-avatar");
+        const nameEl = document.getElementById("sidebar-user-name");
+        const roleEl = document.getElementById("sidebar-user-role");
+
+        if (nameEl) nameEl.textContent = currentUser.full_name;
+        if (roleEl) roleEl.textContent = currentUser.role;
+        
+        if (avatarEl) {
+          if (currentUser.avatar_url) {
+            avatarEl.style.backgroundImage = `url('${currentUser.avatar_url}')`;
+            avatarEl.textContent = "";
+          } else {
+            avatarEl.style.backgroundImage = "none";
+            avatarEl.textContent = currentUser.full_name.charAt(0).toUpperCase();
+          }
+        }
+      }
+
+      async function fetchTeamMembers() {
+        try {
+          // Check if supabaseClient is ready
+          while (typeof supabaseClient === 'undefined') {
+            console.warn('Supabase client not initialized yet (team). Waiting...');
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+
+          const { data, error } = await supabaseClient
+            .from('profiles')
+            .select('*')
+            .order('full_name', { ascending: true });
+
+          if (error) throw error;
+
+          teamMembers = (data || []).map(profile => ({
+            id: profile.id,
+            name: profile.full_name,
+            email: profile.email,
+            role: profile.role,
+            lastActive: formatLastActive(profile.last_active),
+            avatar: profile.avatar_url
+          }));
+
+          if (document.getElementById("tpl-team")) {
+             renderTeamTable();
+          }
+        } catch (error) {
+          console.error('Error fetching team members:', error.message);
+          // Retry on network error
+          if (error.message.includes('fetch')) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            return fetchTeamMembers();
+          }
+        }
+      }
+
+      function formatLastActive(timestamp) {
+        if (!timestamp) return "Tidak diketahui";
+        
+        const lastActive = new Date(timestamp);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - lastActive) / 1000);
+
+        if (diffInSeconds < 60) return "Online sekarang";
+        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} menit yang lalu`;
+        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} jam yang lalu`;
+        return lastActive.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+      }
+
+      const translations = {
+        id: {
+          dashboard: "Ringkasan Dashboard",
+          allLogs: "Manajemen Semua Log",
+          reports: "Laporan & Analitik",
+          settings: "Pengaturan Sistem",
+          team: "Manajemen Akses Tim",
+          addLog: "Tambah Log Baru",
+          editLog: "Edit Data Log",
+          importLog: "Import File Log",
+          logDetail: "Detail Log & Diskusi",
+          welcome: "Selamat datang kembali di",
+          totalLog: "Total Log",
+          todo: "To Do",
+          resolved: "Resolved",
+          reject: "Reject",
+          latestLogs: "Daftar Bug & Error Terbaru",
+          viewAll: "Lihat Semua",
+          searchPlaceholder: "Cari berdasarkan ID, Modul, atau Pelapor...",
+          filterStatus: "Status: Semua",
+          no: "No",
+          version: "Versi",
+          date: "Tanggal",
+          module: "Modul",
+          priority: "Prioritas",
+          status: "Status",
+          reporter: "Pelapor",
+          action: "Aksi",
+          importBtn: "Import Log Baru",
+          addBtn: "Tambah Log Baru",
+          saveBtn: "Simpan Perubahan",
+          cancelBtn: "Batal",
+          update: "Update",
+          appNameLabel: "Nama Log / Judul Proyek",
+          appNamePlaceholder: "Nama Log...",
+          appearance: "Tampilan",
+          darkMode: "Mode Gelap",
+          lightMode: "Mode Terang",
+          interfaceTheme: "Tema Antarmuka",
+          themeDesc: "Sesuaikan tampilan aplikasi sesuai kenyamanan Anda.",
+          language: "Bahasa",
+          selectLanguage: "Pilih Bahasa",
+          helpSupport: "Bantuan & Dukungan",
+          documentation: "Dokumentasi",
+          documentationDesc: "Baca panduan dan referensi API",
+          contactSupport: "Hubungi Bantuan",
+          supportDesc: "Dapatkan bantuan masalah teknis",
+          logout: "Keluar dari Sistem",
+          allLogsDesc: "Kelola dan lacak semua temuan bug serta error sistem secara terpusat.",
+          exportCsv: "Ekspor CSV",
+          reportsDesc: "Analisis statistik dan tren performa perbaikan bug sistem.",
+          totalBugs: "Total Bug Terlapor",
+          avgResolution: "Rata-rata Resolusi",
+          resRate: "Tingkat Resolusi",
+          criticalBugs: "Bug Kritikal",
+          bugTrends: "Tren Bug & Error",
+          bugTrendsDesc: "Data laporan bug 7 hari terakhir",
+          reported: "Dilaporkan",
+          bugsByModule: "Bug per Modul",
+          severityDist: "Distribusi Keparahan",
+          critical: "Kritikal",
+          high: "Tinggi",
+          medium: "Sedang",
+          low: "Rendah",
+          reportGen: "Laporan dibuat otomatis oleh sistem pada",
+          downloadPdf: "Unduh PDF",
+          shareReport: "Bagikan Laporan",
+          teamDesc: "Kelola anggota tim dan hak akses mereka dalam sistem.",
+          addUser: "Tambah Anggota",
+          searchTeamPlaceholder: "Cari anggota tim berdasarkan nama atau email...",
+          allRoles: "Semua Peran",
+          name: "Nama",
+          email: "Email",
+          role: "Peran",
+          lastActive: "Aktif Terakhir",
+          onlineNow: "Online sekarang",
+          timeAgo2h: "2 jam yang lalu",
+          settingsDesc: "Kelola preferensi dan konfigurasi aplikasi Anda.",
+          generalInfo: "Informasi Umum",
+          backToDashboard: "Kembali ke Dashboard",
+          newLogForm: "Formulir Log Bug Baru",
+          newLogFormDesc: "Isi detail lengkap bug untuk membantu tim pengembang.",
+          reportNo: "No. Laporan",
+          autoPlaceholder: "Otomatis",
+          versionPlaceholder: "contoh: v2.4.2",
+          foundDate: "Tanggal Temuan",
+          modulePlaceholder: "contoh: Auth & Login",
+          reporterPlaceholder: "Masukkan nama pelapor",
+          actualBehavior: "Hasil Aktual",
+          actualPlaceholder: "Jelaskan apa yang sebenarnya terjadi...",
+          expectedBehavior: "Harapan",
+          expectedPlaceholder: "Jelaskan apa yang seharusnya terjadi...",
+          attachmentLink: "Link Lampiran",
+          linkPlaceholder: "https://...",
+          statusReport: "🟡 Report",
+          statusTodo: "🔵 To Do",
+          statusProgress: "🟣 On Progress",
+          statusDone: "🟢 Done",
+          statusReject: "🔴 Reject",
+          prioLow: "🟡 Rendah",
+          prioMedium: "🟠 Sedang",
+          prioHigh: "🔴 Tinggi",
+          prioCritical: "🔥 Kritikal",
+          submitLog: "Simpan Log Bug",
+          importLogHeader: "Import File Log",
+          importLogDesc: "Unggah file .xlsx atau .csv untuk memproses log massal.",
+          chooseFile: "Pilih file untuk diunggah",
+          dragDrop: "Seret dan lepas file di sini, atau klik tombol di bawah",
+          selectFile: "Pilih File",
+          downloadTemplate: "Download Template",
+          systemVersion: "Versi Sistem",
+          severity: "Tingkat Keparahan",
+          actualResult: "Hasil Aktual",
+          expectedResult: "Hasil yang Diharapkan",
+          attachmentEvidence: "Lampiran Bukti:",
+          viewAttachment: "Lihat Lampiran",
+          discussionForum: "Forum Diskusi",
+          commentPlaceholder: "Tuliskan komentar atau instruksi untuk tim...",
+          sendComment: "Kirim Komentar",
+          activityHistory: "Riwayat Aktivitas",
+          modifyLogData: "Modifikasi Data Log",
+          modifyLogDesc: "Perbarui informasi laporan temuan bug di bawah ini.",
+          moduleArea: "Modul / Area",
+          lowPriority: "🟡 Rendah",
+          mediumPriority: "🟠 Sedang",
+          highPriority: "🔴 Tinggi",
+          saveChangesBtn: "Simpan Perubahan",
+          back: "Kembali",
+          attachmentLabel: "Lampiran (Link G-Drive/Image)",
+          editor: "Editor",
+          viewer: "Viewer",
+          editUser: "Edit User",
+          deleteUser: "Delete User",
+          saveLogBtn: "Simpan Log Bug",
+          urlPlaceholder: "https://...",
+          justNow: "Baru saja",
+          dayMon: "Sen",
+          dayTue: "Sel",
+          dayWed: "Rab",
+          dayThu: "Kam",
+          dayFri: "Jum",
+          daySat: "Sab",
+          daySun: "Min",
+          modStudentPortal: "Portal Siswa",
+          modPaymentGateway: "Gerbang Pembayaran",
+          modStaffAdmin: "Admin Staf",
+          alertProjectNameUpdated: "Nama proyek berhasil diperbarui!",
+          alertLogUpdated: "Log berhasil diperbarui!",
+          alertLogAdded: "Log berhasil ditambahkan!",
+          viewLogDetail: "Lihat Log",
+          close: "Tutup",
+          sortBy: "Urutkan",
+          filterBy: "Filter",
+          showing: "Menampilkan",
+          of: "dari",
+          logs: "log",
+          minsAgo: "menit yang lalu",
+          hoursAgo: "jam yang lalu",
+          yesterday: "Kemarin",
+          justNow: "Baru saja",
+          hourUnit: " jam",
+          logCreated: "Log dibuat",
+          statusChanged: "Status diubah",
+          priorityChanged: "Prioritas diubah",
+          commentAdded: "Komentar ditambahkan",
+          by: "oleh",
+          to: "ke",
+          allStatus: "Semua Status",
+          newest: "Terbaru",
+          oldest: "Terlama",
+          fullName: "Nama Lengkap",
+          emailAddress: "Alamat Email",
+          password: "Kata Sandi",
+          selectRole: "Pilih Role Akses",
+          editorDesc: "Bisa menambah dan mengedit log sistem.",
+          viewerDesc: "Hanya bisa melihat dan memberi komentar.",
+          saveAccess: "Simpan Akses",
+          addMemberHeader: "Tambah Anggota Tim",
+          addMemberSub: "Berikan akses ke anggota baru untuk bergabung.",
+          editMemberHeader: "Edit Akses Tim",
+          editMemberSub: "Perbarui hak akses anggota tim.",
+          cancel: "Batal",
+          confirmDeleteMember: "Apakah Anda yakin ingin menghapus anggota ini?",
+          noMembersFound: "Tidak ada anggota tim yang ditemukan",
+        },
+        en: {
+          dashboard: "Dashboard Overview",
+          allLogs: "All Logs Management",
+          reports: "Reports & Analytics",
+          settings: "System Settings",
+          team: "Team Access Management",
+          addLog: "Add New Log",
+          editLog: "Edit Log Data",
+          importLog: "Import Log File",
+          logDetail: "Log Detail & Discussion",
+          welcome: "Welcome back to",
+          totalLog: "Total Logs",
+          todo: "To Do",
+          resolved: "Resolved",
+          reject: "Rejected",
+          latestLogs: "Latest Bugs & Errors",
+          viewAll: "View All",
+          searchPlaceholder: "Search by ID, Module, or Reporter...",
+          filterStatus: "Status: All",
+          no: "No",
+          version: "Version",
+          date: "Date",
+          module: "Module",
+          priority: "Priority",
+          status: "Status",
+          reporter: "Reporter",
+          action: "Action",
+          importBtn: "Import New Log",
+          addBtn: "Add New Log",
+          saveBtn: "Save Changes",
+          cancelBtn: "Cancel",
+          update: "Update",
+          appNameLabel: "Log Name / Project Title",
+          appNamePlaceholder: "Log Name...",
+          appearance: "Appearance",
+          darkMode: "Dark Mode",
+          lightMode: "Light Mode",
+          interfaceTheme: "Interface Theme",
+          themeDesc: "Customize how the application looks to you.",
+          language: "Language",
+          selectLanguage: "Select Language",
+          helpSupport: "Help & Support",
+          documentation: "Documentation",
+          documentationDesc: "Read guides and API references",
+          contactSupport: "Contact Support",
+          supportDesc: "Get help with technical issues",
+          logout: "Logout from System",
+          allLogsDesc: "Manage and track all bug findings and system errors centrally.",
+          exportCsv: "Export CSV",
+          reportsDesc: "Analyze statistics and performance trends of system bug fixes.",
+          totalBugs: "Total Reported Bugs",
+          avgResolution: "Avg. Resolution",
+          resRate: "Resolution Rate",
+          criticalBugs: "Critical Bugs",
+          bugTrends: "Bug & Error Trends",
+          bugTrendsDesc: "Bug report data for the last 7 days",
+          reported: "Reported",
+          bugsByModule: "Bugs by Module",
+          severityDist: "Severity Distribution",
+          critical: "Critical",
+          high: "High",
+          medium: "Medium",
+          low: "Low",
+          reportGen: "Report automatically generated by system on",
+          downloadPdf: "Download PDF",
+          shareReport: "Share Report",
+          teamDesc: "Manage team members and their access rights in the system.",
+          addUser: "Add Member",
+          searchTeamPlaceholder: "Search team members by name or email...",
+          allRoles: "All Roles",
+          name: "Name",
+          email: "Email",
+          role: "Role",
+          lastActive: "Last Active",
+          onlineNow: "Online now",
+          timeAgo2h: "2 hours ago",
+          settingsDesc: "Manage your application preferences and configuration.",
+          generalInfo: "General Information",
+          backToDashboard: "Back to Dashboard",
+          newLogForm: "New Bug Log Form",
+          newLogFormDesc: "Fill in full bug details to help the development team.",
+          reportNo: "Report No.",
+          autoPlaceholder: "Automatic",
+          versionPlaceholder: "e.g. v2.4.2",
+          foundDate: "Found Date",
+          modulePlaceholder: "e.g. Auth & Login",
+          reporterPlaceholder: "Enter reporter name",
+          actualBehavior: "Actual Result",
+          actualPlaceholder: "Describe what actually happened...",
+          expectedBehavior: "Expectation",
+          expectedPlaceholder: "Describe what should have happened...",
+          attachmentLink: "Attachment Link",
+          linkPlaceholder: "https://...",
+          statusReport: "🟡 Report",
+          statusTodo: "🔵 To Do",
+          statusProgress: "🟣 On Progress",
+          statusDone: "🟢 Done",
+          statusReject: "🔴 Reject",
+          prioLow: "🟡 Low",
+          prioMedium: "🟠 Medium",
+          prioHigh: "🔴 High",
+          prioCritical: "🔥 Critical",
+          submitLog: "Save Bug Log",
+          importLogHeader: "Import Log File",
+          importLogDesc: "Upload .xlsx or .csv file to process logs in bulk.",
+          chooseFile: "Choose file to upload",
+          dragDrop: "Drag and drop file here, or click button below",
+          selectFile: "Select File",
+          downloadTemplate: "Download Template",
+          systemVersion: "System Version",
+          severity: "Severity Level",
+          actualResult: "Actual Result",
+          expectedResult: "Expected Result",
+          attachmentEvidence: "Attachment Evidence:",
+          viewAttachment: "View Attachment",
+          discussionForum: "Discussion Forum",
+          commentPlaceholder: "Write a comment or instruction for the team...",
+          sendComment: "Send Comment",
+          activityHistory: "Activity History",
+          modifyLogData: "Modify Log Data",
+          modifyLogDesc: "Update the bug report information below.",
+          moduleArea: "Module / Area",
+          lowPriority: "🟡 Low",
+          mediumPriority: "🟠 Medium",
+          highPriority: "🔴 High",
+          saveChangesBtn: "Save Changes",
+          back: "Back",
+          attachmentLabel: "Attachment (G-Drive Link/Image)",
+          editor: "Editor",
+          viewer: "Viewer",
+          editUser: "Edit User",
+          deleteUser: "Delete User",
+          saveLogBtn: "Save Bug Log",
+          urlPlaceholder: "https://...",
+          justNow: "Just now",
+          dayMon: "Mon",
+          dayTue: "Tue",
+          dayWed: "Wed",
+          dayThu: "Thu",
+          dayFri: "Fri",
+          daySat: "Sat",
+          daySun: "Sun",
+          modStudentPortal: "Student Portal",
+          modPaymentGateway: "Payment Gateway",
+          modStaffAdmin: "Staff Admin",
+          alertProjectNameUpdated: "Project name updated successfully!",
+          alertLogUpdated: "Log updated successfully!",
+          alertLogAdded: "Log added successfully!",
+          viewLogDetail: "View Log",
+          close: "Close",
+          sortBy: "Sort By",
+          filterBy: "Filter",
+          showing: "Showing",
+          of: "of",
+          logs: "logs",
+          minsAgo: "mins ago",
+          hoursAgo: "hours ago",
+          yesterday: "Yesterday",
+          justNow: "Just Now",
+          hourUnit: " hours",
+          logCreated: "Log created",
+          statusChanged: "Status changed",
+          priorityChanged: "Priority changed",
+          commentAdded: "Comment added",
+          by: "by",
+          to: "to",
+          allStatus: "All Status",
+          newest: "Newest",
+          oldest: "Oldest",
+          fullName: "Full Name",
+          emailAddress: "Email Address",
+          password: "Password",
+          selectRole: "Select Access Role",
+          editorDesc: "Can add and edit system logs.",
+          viewerDesc: "Can only view and comment.",
+          saveAccess: "Save Access",
+          addMemberHeader: "Add Team Member",
+          addMemberSub: "Grant access to new members to join.",
+          editMemberHeader: "Edit Team Access",
+          editMemberSub: "Update team member access rights.",
+          cancel: "Cancel",
+          confirmDeleteMember: "Are you sure you want to delete this member?",
+          noMembersFound: "No team members found",
+        },
+        ar: {
+          dashboard: "لوحة التحكم",
+          allLogs: "إدارة جميع السجلات",
+          reports: "التقارير والتحليلات",
+          settings: "إعدادات النظام",
+          team: "إدارة فريق العمل",
+          addLog: "إضافة سجل جديد",
+          editLog: "تعديل بيانات السجل",
+          importLog: "استيراد ملف السجل",
+          logDetail: "تفاصيل السجل والمناقشة",
+          welcome: "مرحباً بك مرة أخرى في",
+          totalLog: "إجمالي السجلات",
+          todo: "قيد التنفيذ",
+          resolved: "تم الحل",
+          reject: "مرفوض",
+          latestLogs: "أحدث الأخطاء والعيوب",
+          viewAll: "عرض الكل",
+          searchPlaceholder: "البحث حسب المعرف أو الوحدة أو المبلغ...",
+          filterStatus: "الحالة: الكل",
+          no: "رقم",
+          version: "الإصدار",
+          date: "التاريخ",
+          module: "الوحدة",
+          priority: "الأولوية",
+          status: "الحالة",
+          reporter: "المبلغ",
+          action: "الإجراء",
+          importBtn: "استيراد سجل جديد",
+          addBtn: "إضافة سجل جديد",
+          saveBtn: "حفظ التغييرات",
+          cancelBtn: "إلغاء",
+          update: "تحديث",
+          appNameLabel: "اسم السجل / عنوان المشروع",
+          appNamePlaceholder: "اسم السجل...",
+          appearance: "المظهر",
+          darkMode: "الوضع الداكن",
+          lightMode: "الوضع الفاتح",
+          interfaceTheme: "سمة الواجهة",
+          themeDesc: "تخصيص مظهر التطبيق كما تراه مناسباً.",
+          language: "اللغة",
+          selectLanguage: "اختر اللغة",
+          helpSupport: "المساعدة والدعم",
+          documentation: "التوثيق",
+          documentationDesc: "قراءة الأدلة ومراجع API",
+          contactSupport: "اتصل بالدعم",
+          supportDesc: "الحصول على مساعدة في المشاكل الفنية",
+          logout: "تسجيل الخروج",
+          allLogsDesc: "إدارة وتتبع جميع نتائج الأخطاء وأخطاء النظام بشكل مركزي.",
+          exportCsv: "تصدير CSV",
+          reportsDesc: "تحليل الإحصائيات واتجاهات الأداء لإصلاح أخطاء النظام.",
+          totalBugs: "إجمالي الأخطاء المبلغ عنها",
+          avgResolution: "متوسط وقت الحل",
+          resRate: "معدل الحل",
+          criticalBugs: "الأخطاء الحرجة",
+          bugTrends: "اتجاهات الأخطاء والعيوب",
+          bugTrendsDesc: "بيانات تقرير الأخطاء لآخر 7 أيام",
+          reported: "تم الإبلاغ",
+          bugsByModule: "الأخطاء حسب الوحدة",
+          severityDist: "توزيع الخطورة",
+          critical: "حرج",
+          high: "عالي",
+          medium: "متوسط",
+          low: "منخفض",
+          reportGen: "تم إنشاء التقرير تلقائياً بواسطة النظام في",
+          downloadPdf: "تحميل PDF",
+          shareReport: "مشاركة التقرير",
+          teamDesc: "إدارة أعضاء الفريق وحقوق وصولهم في النظام.",
+          addUser: "إضافة عضو",
+          searchTeamPlaceholder: "البحث عن أعضاء الفريق بالاسم أو البريد الإلكتروني...",
+          allRoles: "جميع الأدوار",
+          name: "الاسم",
+          email: "البريد الإلكتروني",
+          role: "الدور",
+          lastActive: "آخر ظهور",
+          onlineNow: "متصل الآن",
+          timeAgo2h: "منذ ساعتين",
+          settingsDesc: "إدارة تفضيلات التطبيق وتكوينه.",
+          generalInfo: "معلومات عامة",
+          backToDashboard: "العودة إلى لوحة التحكم",
+          newLogForm: "نموذج سجل خطأ جديد",
+          newLogFormDesc: "املأ تفاصيل الخطأ الكاملة لمساعدة فريق التطوير.",
+          reportNo: "رقم التقرير",
+          autoPlaceholder: "تلقائي",
+          versionPlaceholder: "مثلاً: v2.4.2",
+          foundDate: "تاريخ الاكتشاف",
+          modulePlaceholder: "مثلاً: تسجيل الدخول",
+          reporterPlaceholder: "أدخل اسم المبلغ",
+          actualBehavior: "النتيجة الفعلية",
+          actualPlaceholder: "صف ما حدث بالفعل...",
+          expectedBehavior: "النتيجة المتوقعة",
+          expectedPlaceholder: "صف ما كان ينبغي أن يحدث...",
+          attachmentLink: "رابط المرفق",
+          linkPlaceholder: "https://...",
+          statusReport: "🟡 بلاغ",
+          statusTodo: "🔵 قيد التنفيذ",
+          statusProgress: "🟣 جاري العمل",
+          statusDone: "🟢 تم الحل",
+          statusReject: "🔴 مرفوض",
+          prioLow: "🟡 منخفض",
+          prioMedium: "🟠 متوسط",
+          prioHigh: "🔴 عالي",
+          prioCritical: "🔥 حرج",
+          submitLog: "حفظ سجل الخطأ",
+          importLogHeader: "استيراد ملف السجل",
+          importLogDesc: "تحميل ملف .xlsx أو .csv لمعالجة السجلات بشكل جماعي.",
+          chooseFile: "اختر ملفاً لتحميله",
+          dragDrop: "اسحب وأفلت الملف هنا، أو انقر فوق الزر أدناه",
+          selectFile: "اختر ملفاً",
+          downloadTemplate: "تحميل القالب",
+          systemVersion: "إصدار النظام",
+          severity: "الخطورة",
+          actualResult: "النتيجة الفعلية",
+          expectedResult: "النتيجة المتوقعة",
+          attachmentEvidence: "دليل المرفقات:",
+          viewAttachment: "عرض المرفق",
+          discussionForum: "منتدى المناقشة",
+          commentPlaceholder: "اكتب تعليقاً أو تعليمات للفريق...",
+          sendComment: "إرسال التعليق",
+          activityHistory: "سجل النشاط",
+          modifyLogData: "تعديل بيانات السجل",
+          modifyLogDesc: "تحديث معلومات تقرير الخطأ أدناه.",
+          moduleArea: "الوحدة / المنطقة",
+          lowPriority: "🟡 منخفض",
+          mediumPriority: "🟠 متوسط",
+          highPriority: "🔴 عالي",
+          saveChangesBtn: "حفظ التغييرات",
+          back: "عودة",
+          attachmentLabel: "المرفق (رابط G-Drive/صورة)",
+          editor: "محرر",
+          viewer: "مشاهد",
+          editUser: "تعديل المستخدم",
+          deleteUser: "حذف المستخدم",
+          saveLogBtn: "حفظ سجل الخطأ",
+          urlPlaceholder: "https://...",
+          justNow: "الآن فقط",
+          dayMon: "الاثنين",
+          dayTue: "الثلاثاء",
+          dayWed: "الأربعاء",
+          dayThu: "الخميس",
+          dayFri: "الجمعة",
+          daySat: "السبت",
+          daySun: "الأحد",
+          modStudentPortal: "بوابة الطلاب",
+          modPaymentGateway: "بوابة الدفع",
+          modStaffAdmin: "مسؤول الموظفين",
+          alertProjectNameUpdated: "تم تحديث اسم المشروع بنجاح!",
+          alertLogUpdated: "تم تحديث السجل بنجاح!",
+          alertLogAdded: "تم إضافة السجل بنجاح!",
+          viewLogDetail: "عرض السجل",
+          close: "إغلاق",
+          sortBy: "فرز حسب",
+          filterBy: "تصفية",
+          showing: "عرض",
+          of: "من",
+          logs: "سجلات",
+          minsAgo: "منذ دقائق",
+          hoursAgo: "منذ ساعات",
+          yesterday: "أمس",
+          justNow: "الآن فقط",
+          hourUnit: " ساعة",
+          logCreated: "تم إنشاء السجل",
+          statusChanged: "تم تغيير الحالة",
+          priorityChanged: "تم تغيير الأولوية",
+          commentAdded: "تم إضافة تعليق",
+          by: "بواسطة",
+          to: "إلى",
+          allStatus: "كل الحالة",
+          newest: "الأحدث",
+          oldest: "الأقدم",
+          fullName: "الاسم الكامل",
+          emailAddress: "البريد الإلكتروني",
+          password: "كلمة المرور",
+          selectRole: "اختر دور الوصول",
+          editorDesc: "يمكنه إضافة وتعديل سجلات النظام.",
+          viewerDesc: "يمكنه فقط العرض والتعليق.",
+          saveAccess: "حفظ الوصول",
+          addMemberHeader: "إضافة عضو فريق",
+          addMemberSub: "منح حق الوصول للأعضاء الجدد للانضمام.",
+          editMemberHeader: "تعديل وصول الفريق",
+          editMemberSub: "تحديث حقوق وصول أعضاء الفريق.",
+          cancel: "إلغاء",
+          confirmDeleteMember: "هل أنت متأكد أنك تريد حذف هذا العضو؟",
+          noMembersFound: "لم يتم العثور على أعضاء في الفريق",
+        },
+      };
+
+      function setLanguage(lang) {
+        currentLanguage = lang;
+        const t = translations[lang];
+
+        // Update document title and static translations
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+
+        // Re-render current page to apply translations
+        const currentActivePage = document.querySelector(".nav-item.nav-active");
+        if (currentActivePage) {
+          const pageId = currentActivePage.getAttribute("onclick").match(/'([^']+)'/)[1];
+          navigateTo(pageId);
+        }
+
+        // Save preference (optional, but good practice)
+        localStorage.setItem("appLanguage", lang);
+      }
+
+      // Helper to get translation
+      function t(key) {
+        return translations[currentLanguage][key] || key;
+      }
+
+      // DATA DUMMY
+      let logs = []; // Sekarang dikosongkan karena akan diisi dari Supabase
+      let currentPage = 1;
+      let rowsPerPage = 20;
+
+      // Fungsi untuk mengambil data dari Supabase
+      async function fetchLogs() {
+        try {
+          // Check if supabaseClient is ready
+          while (typeof supabaseClient === 'undefined') {
+            console.warn('Supabase client not initialized yet (logs). Waiting...');
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+
+          let query = supabaseClient
+            .from('logs')
+            .select(`
+              *,
+              profiles:reporter_id (full_name)
+            `);
+          
+          if (currentProjectId) {
+            query = query.eq('project_id', currentProjectId);
+          }
+
+          const { data, error } = await query.order('created_at', { ascending: false });
+
+          if (error) throw error;
+
+          // Format data agar sesuai dengan struktur UI lama
+          logs = (data || []).map(item => ({
+            id: item.id || 0,
+            noLap: item.no_lap || '?',
+            versi: item.version || '-',
+            tanggal: item.found_date || new Date().toISOString(),
+            modul: item.module || 'Unknown',
+            status: item.status || 'report',
+            priority: item.priority || 'low',
+            pelapor: item.profiles ? (Array.isArray(item.profiles) ? item.profiles[0]?.full_name : item.profiles.full_name) : 'Unknown',
+            keparahan: item.severity_details || '-',
+            aktual: item.actual_behavior || '-',
+            harapan: item.expected_behavior || '-',
+            lampiran: item.attachment_link || '#'
+          }));
+
+          renderDashboardTable();
+          renderAllLogs();
+        } catch (error) {
+          console.error('Error fetching logs:', error.message);
+          // Retry on network error
+          if (error.message.includes('fetch')) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            return fetchLogs();
+          }
+        }
+      }
+
+      // Panggil fetchLogs saat halaman dimuat
+      window.addEventListener('DOMContentLoaded', async () => {
+        try {
+          // Tampilkan loading state awal
+          const tables = ["dashboard-table-body", "all-logs-table-body", "team-table-body"];
+          tables.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = '<tr><td colspan="10" class="py-10 text-center"><div class="inline-block animate-spin size-6 border-[3px] border-current border-t-transparent text-emerald-600 rounded-full" role="status"></div><p class="mt-2 text-sm text-gray-500">Memuat data...</p></td></tr>';
+          });
+
+          await checkAuth(); // Pastikan user sudah login
+          
+          await fetchProjectInfo(); // Ambil info proyek dulu
+          
+          // Gunakan try-catch individual untuk fetch agar jika satu gagal yang lain tetap jalan
+          try {
+            await Promise.all([
+              fetchLogs(),
+              fetchTeamMembers()
+            ]);
+          } catch (fetchError) {
+            console.error('Error fetching data:', fetchError);
+          }
+
+          // Pindahkan navigateTo ke sini setelah data selesai dimuat
+          navigateTo("dashboard");
+        } catch (error) {
+          console.error('Initialization error:', error);
+          // Jika error parah, beri tahu user
+          if (contentContainer) {
+            contentContainer.innerHTML = `
+              <div class="flex flex-col items-center justify-center min-h-[400px] text-center p-6">
+                <span class="material-symbols-outlined text-red-500 text-6xl mb-4">error</span>
+                <h2 class="text-xl font-bold dark:text-white mb-2">Gagal memuat data</h2>
+                <p class="text-gray-500 dark:text-gray-400 mb-6">${error.message}</p>
+                <button onclick="window.location.reload()" class="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-bold transition-colors">
+                  Refresh Halaman
+                </button>
+              </div>
+            `;
+          }
+        }
+      });
+
+      let comments = [
+        {
+          id: 1,
+          logId: 101,
+          user: "Editor",
+          role: "Editor",
+          text: "Saya sedang mengecek issue ini di server production.",
+          time: "24 Nov, 11:45",
+        },
+        {
+          id: 2,
+          logId: 101,
+          user: "Ahmad F.",
+          role: "Viewer",
+          text: "Siap, kabari jika butuh data tambahan.",
+          time: "24 Nov, 12:00",
+        },
+      ];
+
+      // NAVIGATION LOGIC
+      const contentContainer = document.getElementById("content-container");
+      const pageTitle = document.getElementById("page-title");
+      const sidebar = document.getElementById("sidebar");
+
+      const pages = {
+        dashboard: { title: "dashboard", template: "tpl-dashboard" },
+        "all-logs": { title: "allLogs", template: "tpl-all-logs" },
+        reports: {
+          title: "reports",
+          template: "tpl-reports",
+        },
+        settings: { title: "settings", template: "tpl-settings" },
+        team: { title: "team", template: "tpl-team" },
+        "add-log": { title: "addLog", template: "tpl-add-log" },
+        "import-log": { title: "importLog", template: "tpl-import-log" },
+        "log-detail": {
+          title: "logDetail",
+          template: "tpl-log-detail",
+        },
+        "edit-log": { title: "editLog", template: "tpl-edit-log" },
+      };
+
+      function updateRole(role) {
+        currentUserRole = role;
+        const currentActivePage = document.querySelector(
+          ".nav-item.nav-active",
+        );
+        const pageId = currentActivePage
+          ? currentActivePage.id.replace("nav-", "")
+          : "dashboard";
+        navigateTo(pageId);
+      }
+
+      function navigateTo(pageId) {
+        const page = pages[pageId];
+        if (!page) return;
+
+        // Update content
+        const template = document.getElementById(page.template);
+        contentContainer.innerHTML = "";
+        contentContainer.appendChild(template.content.cloneNode(true));
+
+        // Update Header Title
+        pageTitle.textContent = t(page.title);
+
+        // Apply App Name UI
+        updateAppNameUI();
+
+        // Translate all elements with data-t
+        translateUI();
+
+        // Apply Page Specific Logic
+        if (pageId === "dashboard") renderDashboardTable();
+        if (pageId === "all-logs") renderAllLogs();
+        if (pageId === "team") renderTeamTable();
+        if (pageId === "settings") {
+          const input = document.getElementById("app-name-input");
+          if (input) input.value = currentAppName;
+          
+          const langSelect = document.getElementById("language");
+          if (langSelect) {
+            langSelect.value = currentLanguage;
+            langSelect.onchange = (e) => setLanguage(e.target.value);
+          }
+        }
+
+        // Apply Role UI logic
+        applyRoleUI();
+
+        // Update Sidebar Active State
+        document.querySelectorAll(".nav-item").forEach((btn) => {
+          btn.classList.remove("nav-active");
+          btn.classList.add("nav-inactive");
+          
+          // Translate sidebar items
+          const p = btn.querySelector("p");
+          if (p) {
+            const id = btn.id.replace("nav-", "");
+            if (pages[id]) p.textContent = t(pages[id].title);
+          }
+        });
+        const activeNav = document.getElementById(`nav-${pageId}`);
+        if (activeNav) {
+          activeNav.classList.add("nav-active");
+          activeNav.classList.remove("nav-inactive");
+        }
+
+        // Close mobile sidebar if open
+        if (!sidebar.classList.contains("-translate-x-full")) {
+          toggleSidebar();
+        }
+
+        contentContainer.scrollTop = 0;
+      }
+
+      function translateUI() {
+        // Translate all elements with data-t
+        document.querySelectorAll("[data-t]").forEach((el) => {
+          const key = el.getAttribute("data-t");
+          el.textContent = t(key);
+        });
+        
+        // Translate all elements with data-t-placeholder
+        document.querySelectorAll("[data-t-placeholder]").forEach((el) => {
+          const key = el.getAttribute("data-t-placeholder");
+          el.placeholder = t(key);
+        });
+
+        // Translate all elements with data-t-title
+        document.querySelectorAll("[data-t-title]").forEach((el) => {
+          const key = el.getAttribute("data-t-title");
+          el.title = t(key);
+        });
+
+        // Translate page title in browser tab
+        const activeNav = document.querySelector(".nav-item.nav-active");
+        if (activeNav) {
+          const pageId = activeNav.id.replace("nav-", "");
+          const page = pages[pageId];
+          if (page) {
+            document.title = `${t(page.title)} | ${currentAppName}`;
+          }
+        }
+      }
+
+      async function saveAppName() {
+        if (currentUserRole !== "Editor") return;
+        const input = document.getElementById("app-name-input");
+        if (input && input.value.trim() !== "") {
+          const newName = input.value.trim();
+          
+          try {
+            if (currentProjectId) {
+              const { error } = await supabaseClient
+                .from('projects')
+                .update({ name: newName })
+                .eq('id', currentProjectId);
+              
+              if (error) throw error;
+            } else {
+              const { data, error } = await supabaseClient
+                .from('projects')
+                .insert([{ name: newName }])
+                .select()
+                .single();
+              
+              if (error) throw error;
+              currentProjectId = data.id;
+              localStorage.setItem('project_id', currentProjectId);
+            }
+
+            currentAppName = newName;
+            localStorage.setItem('app_name', currentAppName);
+            updateAppNameUI();
+            showPopup('alertProjectNameUpdated', t('alertProjectNameUpdated'));
+          } catch (error) {
+            console.error('Error updating project name:', error.message);
+            alert('Gagal memperbarui nama proyek: ' + error.message);
+          }
+        }
+      }
+
+      function showPopup(titleKey, desc, primaryBtnAction = null) {
+        const modal = document.getElementById("popup-modal");
+        const title = document.getElementById("popup-title");
+        const description = document.getElementById("popup-desc");
+        const primaryBtn = document.getElementById("popup-primary-btn");
+
+        title.setAttribute("data-t", titleKey);
+        title.textContent = t(titleKey);
+        description.textContent = desc;
+
+        if (primaryBtnAction) {
+          primaryBtn.style.display = "flex";
+          primaryBtn.onclick = () => {
+            primaryBtnAction();
+            closePopup();
+          };
+        } else {
+          primaryBtn.style.display = "none";
+        }
+
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          modal.querySelector("div").classList.remove("scale-95");
+          modal.querySelector("div").classList.add("scale-100");
+        }, 10);
+      }
+
+      function closePopup() {
+        const modal = document.getElementById("popup-modal");
+        modal.querySelector("div").classList.remove("scale-100");
+        modal.querySelector("div").classList.add("scale-95");
+        setTimeout(() => {
+          modal.classList.add("hidden");
+        }, 200);
+      }
+
+      function updateAppNameUI() {
+        // Update Sidebar
+        const sidebarName = document.getElementById("sidebar-app-name");
+        if (sidebarName) sidebarName.textContent = currentAppName;
+
+        // Update document title
+        const docTitle = document.getElementById("doc-title");
+        if (docTitle)
+          docTitle.textContent = currentAppName + " - Integrated Dashboard";
+
+        // Update any app-name-display spans in the content
+        document.querySelectorAll(".app-name-display").forEach((el) => {
+          el.textContent = currentAppName;
+        });
+      }
+
+      // LOG RENDERERS
+      function getTimeAgo(dateString) {
+        const now = new Date();
+        const past = new Date(dateString);
+        const diffInMs = now - past;
+        const diffInMins = Math.floor(diffInMs / (1000 * 60));
+        const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+        const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+        if (diffInMins < 1) return t("justNow");
+        if (diffInMins < 60) return `${diffInMins} ${t("minsAgo")}`;
+        if (diffInHours < 24) return `${diffInHours} ${t("hoursAgo")}`;
+        if (diffInDays === 1) return t("yesterday");
+        return past.toLocaleDateString();
+      }
+
+      function renderDashboardTable() {
+        const tbody = document.getElementById("dashboard-table-body");
+        const searchQuery = document.getElementById("dashboard-search")?.value.toLowerCase() || "";
+        const filterValue = document.getElementById("dashboard-filter")?.value || "all";
+        const sortValue = document.getElementById("dashboard-sort")?.value || "newest";
+
+        if (!tbody) return;
+
+        let filteredLogs = logs.filter(log => {
+          const modulMatch = (log.modul || "").toLowerCase().includes(searchQuery);
+          const pelaporMatch = (log.pelapor || "").toLowerCase().includes(searchQuery);
+          const noLapMatch = (log.noLap || "").toString().includes(searchQuery);
+          const priorityMatch = (log.priority || "").toLowerCase().includes(searchQuery);
+          
+          const matchesSearch = modulMatch || pelaporMatch || noLapMatch || priorityMatch;
+          const matchesFilter = filterValue === "all" || (log.status || "report") === filterValue;
+          
+          return matchesSearch && matchesFilter;
+        });
+
+        // Apply Sorting
+        filteredLogs.sort((a, b) => {
+          const dateA = new Date(a.tanggal || 0);
+          const dateB = new Date(b.tanggal || 0);
+          return sortValue === "newest" ? dateB - dateA : dateA - dateB;
+        });
+
+        if (filteredLogs.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="px-6 py-10 text-center text-gray-500 dark:text-gray-400">
+                <div class="flex flex-col items-center gap-2">
+                  <span class="material-symbols-outlined text-4xl opacity-20">inventory_2</span>
+                  <p class="text-sm font-medium">${t('noDataFound') || 'Tidak ada data log ditemukan'}</p>
+                </div>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = filteredLogs
+          .slice(0, 5)
+          .map(
+            (log, i) => {
+              const status = log.status || 'report';
+              const statusKey = 'status' + status.charAt(0).toUpperCase() + status.slice(1);
+              return `
+                <tr class="hover:bg-gray-50 dark:hover:bg-[#252525] transition-colors group">
+                    <td class="px-6 py-5 font-bold text-gray-400 dark:text-gray-500 text-xs tracking-wider group-hover:text-emerald-500 transition-colors">#${i + 1}</td>
+                    <td class="px-6 py-5">
+                        <div class="flex flex-col">
+                            <span class="dark:text-white font-bold text-sm mb-0.5">${log.modul || 'Unknown'}</span>
+                            <span class="text-[11px] text-gray-400 dark:text-gray-500 line-clamp-1">Project: ${currentAppName || 'Website Log Bug & Error'}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5">
+                        <span class="badge-status-${status} px-3 py-1 rounded-full text-[10px] font-bold uppercase ring-1 ring-inset ring-current/20">${t(statusKey)}</span>
+                    </td>
+                    <td class="px-6 py-5">
+                        <div class="flex items-center gap-3">
+                            <div class="size-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 font-bold text-xs overflow-hidden">
+                                ${(log.pelapor || 'U').charAt(0)}
+                            </div>
+                            <span class="dark:text-gray-300 font-semibold text-xs">${log.pelapor || 'Unknown'}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5 text-gray-500 dark:text-gray-400 text-xs font-medium">
+                        ${getTimeAgo(log.tanggal || new Date())}
+                    </td>
+                    <td class="px-6 py-5 text-right">
+                        <button onclick="viewLogDetail(${log.id})" class="p-2.5 text-gray-400 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-lg transition-all"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+                    </td>
+                </tr>
+            `;
+            }
+          )
+          .join("");
+
+        // Update stats
+        const totalEl = document.querySelector(".total-count");
+        const todoEl = document.querySelector(".todo-count");
+        const doneEl = document.querySelector(".done-count");
+        const rejectEl = document.querySelector(".reject-count");
+        const dashboardTotalCount = document.querySelector(".dashboard-total-count");
+
+        if (totalEl) totalEl.textContent = logs.length;
+        if (dashboardTotalCount) dashboardTotalCount.textContent = logs.length;
+        if (todoEl)
+          todoEl.textContent = logs.filter((l) => (l.status || "").toLowerCase() === "todo").length;
+        if (doneEl)
+          doneEl.textContent = logs.filter((l) => (l.status || "").toLowerCase() === "done").length;
+        if (rejectEl)
+          rejectEl.textContent = logs.filter(
+            (l) => (l.status || "").toLowerCase() === "reject",
+          ).length;
+      }
+
+      function renderAllLogs() {
+        const tbody = document.getElementById("all-logs-table-body");
+        const searchQuery = document.getElementById("log-search")?.value.toLowerCase() || "";
+        const filterValue = document.getElementById("log-filter")?.value || "all";
+        const sortValue = document.getElementById("log-sort")?.value || "newest";
+
+        if (!tbody) return;
+
+        let filteredLogs = logs.filter((log) => {
+          const modulMatch = (log.modul || "").toLowerCase().includes(searchQuery);
+          const pelaporMatch = (log.pelapor || "").toLowerCase().includes(searchQuery);
+          const noLapMatch = (log.noLap || "").toString().includes(searchQuery);
+          const priorityMatch = (log.priority || "").toLowerCase().includes(searchQuery);
+          
+          const matchesSearch = modulMatch || pelaporMatch || noLapMatch || priorityMatch;
+          const matchesFilter = filterValue === "all" || (log.status || "report") === filterValue;
+          
+          return matchesSearch && matchesFilter;
+        });
+
+        // Apply Sorting
+        filteredLogs.sort((a, b) => {
+          const dateA = new Date(a.tanggal || 0);
+          const dateB = new Date(b.tanggal || 0);
+          return sortValue === "newest" ? dateB - dateA : dateA - dateB;
+        });
+
+        const totalItems = filteredLogs.length;
+        const totalPages = Math.ceil(totalItems / rowsPerPage);
+        
+        // Adjust current page if out of bounds
+        if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        const startIndex = (currentPage - 1) * rowsPerPage;
+        const endIndex = Math.min(startIndex + rowsPerPage, totalItems);
+        const paginatedLogs = filteredLogs.slice(startIndex, endIndex);
+
+        if (totalItems === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" class="px-6 py-10 text-center text-gray-500 dark:text-gray-400">
+                <div class="flex flex-col items-center gap-2">
+                  <span class="material-symbols-outlined text-4xl opacity-20">inventory_2</span>
+                  <p class="text-sm font-medium">${t('noDataFound') || 'Tidak ada data log ditemukan'}</p>
+                </div>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = paginatedLogs
+          .map(
+            (log, i) => {
+              const status = log.status || 'report';
+              const priority = log.priority || 'low';
+              const statusKey = 'status' + status.charAt(0).toUpperCase() + status.slice(1);
+              const priorityKey = 'prio' + priority.charAt(0).toUpperCase() + priority.slice(1);
+              const displayNo = startIndex + i + 1;
+              return `
+                <tr class="hover:bg-gray-50 dark:hover:bg-[#252525] transition-colors group">
+                    <td class="px-6 py-5 font-bold text-gray-400 dark:text-gray-500 text-xs tracking-wider group-hover:text-emerald-500 transition-colors">#${displayNo}</td>
+                    <td class="px-6 py-5 text-gray-500 dark:text-gray-400 text-xs font-medium">
+                        ${new Date(log.tanggal || Date.now()).toLocaleDateString('id-ID')}
+                    </td>
+                    <td class="px-6 py-5">
+                        <div class="flex flex-col">
+                            <span class="dark:text-white font-bold text-sm mb-0.5">${log.modul || 'Unknown'}</span>
+                            <span class="text-[11px] text-gray-400 dark:text-gray-500 line-clamp-1">Project: ${currentAppName || 'Website Log Bug & Error'}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5">
+                        <span class="badge-status-${status} px-3 py-1 rounded-full text-[10px] font-bold uppercase ring-1 ring-inset ring-current/20">${t(statusKey)}</span>
+                    </td>
+                    <td class="px-6 py-5">
+                        <span class="badge-prio-${priority} px-3 py-1 rounded-full text-[10px] font-bold uppercase ring-1 ring-inset ring-current/20">${t(priorityKey)}</span>
+                    </td>
+                    <td class="px-6 py-5">
+                        <div class="flex items-center gap-3">
+                            <div class="size-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 font-bold text-xs overflow-hidden">
+                                ${(log.pelapor || 'U').charAt(0)}
+                            </div>
+                            <span class="dark:text-gray-300 font-semibold text-xs">${log.pelapor || 'Unknown'}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5 text-right">
+                        <div class="flex justify-end gap-1">
+                            <button onclick="viewLogDetail(${log.id})" class="p-2.5 text-gray-400 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-lg transition-all"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            }
+          )
+          .join("");
+
+        // Update Pagination Info
+        const startEl = document.getElementById("pagination-start");
+        const endEl = document.getElementById("pagination-end");
+        const totalEl = document.querySelector(".all-logs-total-count");
+        const btnPrev = document.getElementById("btn-prev");
+        const btnNext = document.getElementById("btn-next");
+        const rowsSelect = document.getElementById("rows-per-page");
+
+        if (startEl) startEl.textContent = totalItems === 0 ? 0 : startIndex + 1;
+        if (endEl) endEl.textContent = endIndex;
+        if (totalEl) totalEl.textContent = totalItems;
+        if (btnPrev) btnPrev.disabled = currentPage === 1;
+        if (btnNext) btnNext.disabled = currentPage === totalPages || totalPages === 0;
+        if (rowsSelect) rowsSelect.value = rowsPerPage;
+
+        applyRoleUI();
+      }
+
+      function changePage(direction) {
+        if (direction === 'prev' && currentPage > 1) {
+          currentPage--;
+        } else if (direction === 'next') {
+          const totalItems = logs.length; // Simplified for now, will be filtered in render
+          const totalPages = Math.ceil(totalItems / rowsPerPage);
+          if (currentPage < totalPages) {
+            currentPage++;
+          }
+        }
+        renderAllLogs();
+      }
+
+      function changeRowsPerPage(value) {
+        rowsPerPage = parseInt(value);
+        currentPage = 1;
+        renderAllLogs();
+      }
+
+      // LOG DETAIL LOGIC
+      async function viewLogDetail(id) {
+        const log = logs.find((l) => l.id === id);
+        if (!log) return;
+
+        navigateTo("log-detail");
+
+        // Populate fields
+        document.getElementById("detail-id").textContent = `#${log.noLap || '?'}`;
+        document.getElementById("detail-module").textContent = log.modul || 'Unknown';
+        document.getElementById("detail-version").textContent = log.versi || '-';
+        document.getElementById("detail-date").textContent = new Date(
+          log.tanggal || Date.now(),
+        ).toLocaleString('id-ID');
+        document.getElementById("detail-severity").textContent = log.keparahan || '-';
+        document.getElementById("detail-reporter").textContent = log.pelapor || 'Unknown';
+        document.getElementById("detail-actual").textContent = log.aktual || '-';
+        document.getElementById("detail-expected").textContent = log.harapan || '-';
+        document.getElementById("detail-attachment").href = log.lampiran || '#';
+
+        // Set log ID for comment input
+        const commentInput = document.getElementById("comment-input");
+        if (commentInput) {
+          commentInput.setAttribute("data-log-id", log.id);
+        }
+
+        const statusEl = document.getElementById("detail-status");
+        const statusValue = log.status || 'report';
+        const statusKey = 'status' + statusValue.charAt(0).toUpperCase() + statusValue.slice(1);
+        statusEl.className = `badge-status-${statusValue} px-3 py-1 rounded-full text-xs font-bold uppercase`;
+        statusEl.textContent = t(statusKey);
+
+        // Edit button for editor
+        const actions = document.getElementById("detail-actions");
+        actions.innerHTML = `
+                <button onclick="editLog(${log.id})" class="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-lg text-sm font-bold dark:text-white hover:bg-gray-50 transition-all role-editor-only">
+                    <span class="material-symbols-outlined text-sm">edit</span> ${t('editLog')}
+                </button>
+            `;
+
+        await fetchComments(id);
+        applyRoleUI();
+      }
+
+      async function fetchComments(logId) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('discussion_forum')
+            .select(`
+              *,
+              profiles:user_id (full_name, role)
+            `)
+            .eq('log_id', logId)
+            .order('created_at', { ascending: true });
+
+          if (error) throw error;
+
+          comments = (data || []).map(c => ({
+            id: c.id,
+            logId: c.log_id,
+            user: c.profiles ? (Array.isArray(c.profiles) ? c.profiles[0]?.full_name : c.profiles.full_name) : 'Unknown',
+            role: c.profiles ? (Array.isArray(c.profiles) ? c.profiles[0]?.role : c.profiles.role) : 'User',
+            text: c.comment_text || '',
+            time: formatCommentTime(c.created_at)
+          }));
+
+          renderComments(logId);
+        } catch (error) {
+          console.error('Error fetching comments:', error.message);
+        }
+      }
+
+      function formatCommentTime(timestamp) {
+        const date = new Date(timestamp);
+        return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) + ', ' + 
+               date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      }
+
+      function renderComments(logId) {
+        const container = document.getElementById("discussion-bubbles");
+        if (!container) return;
+
+        container.innerHTML = comments
+          .map(
+            (c) => {
+              const userInitial = (c.user || "U").charAt(0);
+              const userName = c.user || "Unknown";
+              const userTime = c.time || "";
+              const userText = c.text || "";
+              const isMe = currentUser && c.user === currentUser.full_name;
+              
+              return `
+                <div class="flex gap-4 ${isMe ? "flex-row-reverse" : ""}">
+                    <div class="size-10 rounded-full ${c.role === "Editor" ? "bg-emerald-600" : "bg-blue-600"} shrink-0 flex items-center justify-center text-white font-bold text-sm">
+                        ${userInitial}
+                    </div>
+                    <div class="flex flex-col gap-1 ${isMe ? "items-end" : ""}">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold dark:text-white">${userName}</span>
+                            <span class="text-[10px] text-gray-400">${userTime}</span>
+                        </div>
+                        <div class="${isMe ? "bubble-me" : "bubble-other"}">
+                            <p class="text-sm">${userText}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            }
+          )
+          .join("");
+
+        // Set data-log-id for posting
+        const commentInput = document.getElementById("comment-input");
+        if (commentInput) {
+          commentInput.setAttribute("data-log-id", logId);
+        }
+      }
+
+      async function postComment() {
+        const input = document.getElementById("comment-input");
+        const logId = parseInt(input.getAttribute("data-log-id"));
+        if (input.value.trim() === "" || !currentUser) return;
+
+        const commentText = input.value.trim();
+
+        try {
+          const { error } = await supabaseClient
+            .from('discussion_forum')
+            .insert([{
+              log_id: logId,
+              user_id: currentUser.id,
+              comment_text: commentText
+            }]);
+
+          if (error) throw error;
+
+          input.value = "";
+          await fetchComments(logId);
+        } catch (error) {
+          console.error('Error posting comment:', error.message);
+          alert('Gagal mengirim komentar: ' + error.message);
+        }
+      }
+
+      // EDIT LOG LOGIC
+      function editLog(id) {
+        const log = logs.find((l) => l.id === id);
+        if (!log) return;
+
+        navigateTo("edit-log");
+
+        document.getElementById("edit-header-title").textContent =
+          `${t('editLog')} #${log.noLap}`;
+        document.getElementById("edit-log-id-internal").value = log.id;
+        document.getElementById("edit-no-lap").value = log.noLap;
+        document.getElementById("edit-versi").value = log.versi;
+        document.getElementById("edit-tanggal").value = log.tanggal;
+        document.getElementById("edit-modul").value = log.modul;
+        document.getElementById("edit-priority").value = log.priority;
+        document.getElementById("edit-severity").value = log.keparahan;
+        document.getElementById("edit-aktual").value = log.aktual;
+        document.getElementById("edit-harapan").value = log.harapan;
+        document.getElementById("edit-status").value = log.status;
+        document.getElementById("edit-pelapor").value = log.pelapor;
+        document.getElementById("edit-lampiran").value = log.lampiran;
+      }
+
+      // SAVE NEW LOG LOGIC
+      async function saveNewLog() {
+        const nextNoLap = logs.length > 0 ? Math.max(...logs.map(l => typeof l.noLap === 'number' ? l.noLap : 0)) + 1 : 101;
+        const newLogData = {
+          no_lap: nextNoLap,
+          version: document.getElementById("add-versi").value,
+          found_date: document.getElementById("add-tanggal").value,
+          module: document.getElementById("add-modul").value,
+          priority: document.getElementById("add-priority").value,
+          severity_details: document.getElementById("add-severity").value,
+          actual_behavior: document.getElementById("add-aktual").value,
+          expected_behavior: document.getElementById("add-harapan").value,
+          status: document.getElementById("add-status").value,
+          reporter_id: currentUser ? currentUser.id : null,
+          attachment_link: document.getElementById("add-lampiran").value || null,
+          project_id: currentProjectId
+        };
+
+        try {
+          if (!currentProjectId) {
+            throw new Error('Project ID tidak ditemukan. Mohon refresh halaman.');
+          }
+
+          const { error } = await supabaseClient
+            .from('logs')
+            .insert([newLogData]);
+
+          if (error) throw error;
+          
+          await fetchLogs(); // Refresh data from database
+          showPopup('alertLogAdded', t('alertLogAdded'), () => navigateTo('all-logs'));
+        } catch (error) {
+          console.error('Error adding log:', error.message);
+          alert('Gagal menambah log: ' + error.message);
+        }
+      }
+
+      async function saveLogUpdate() {
+        const id = parseInt(document.getElementById("edit-log-id-internal").value);
+        
+        const updatedData = {
+          version: document.getElementById("edit-versi").value,
+          found_date: document.getElementById("edit-tanggal").value,
+          module: document.getElementById("edit-modul").value,
+          priority: document.getElementById("edit-priority").value,
+          severity_details: document.getElementById("edit-severity").value,
+          actual_behavior: document.getElementById("edit-aktual").value,
+          expected_behavior: document.getElementById("edit-harapan").value,
+          status: document.getElementById("edit-status").value,
+          attachment_link: document.getElementById("edit-lampiran").value
+        };
+
+        try {
+          const { error } = await supabaseClient
+            .from('logs')
+            .update(updatedData)
+            .eq('id', id);
+
+          if (error) throw error;
+
+          await fetchLogs(); // Refresh data
+          showPopup('alertLogUpdated', t('alertLogUpdated'), () => viewLogDetail(id));
+        } catch (error) {
+          console.error('Error updating log:', error.message);
+          alert('Gagal mengupdate log: ' + error.message);
+        }
+      }
+
+      async function deleteLog(id) {
+        if (confirm('Apakah Anda yakin ingin menghapus log ini?')) {
+          try {
+            const { error } = await supabaseClient
+              .from('logs')
+              .delete()
+              .eq('id', id);
+
+            if (error) throw error;
+
+            await fetchLogs(); // Refresh data
+            showPopup('alertLogDeleted', 'Log berhasil dihapus!');
+          } catch (error) {
+            console.error('Error deleting log:', error.message);
+            alert('Gagal menghapus log: ' + error.message);
+          }
+        }
+      }
+
+      function applyRoleUI() {
+        // Label current role
+        const labels = document.querySelectorAll(".current-role-label");
+        labels.forEach((el) => (el.textContent = currentUserRole));
+
+        // Visibility based on role
+        const editorElements = document.querySelectorAll(".role-editor-only");
+        const viewerElements = document.querySelectorAll(".role-viewer-only");
+
+        // Force Viewer role behavior
+        editorElements.forEach((el) => (el.style.display = "none"));
+        viewerElements.forEach((el) => (el.style.display = "flex"));
+      }
+
+      // TEAM MANAGEMENT LOGIC
+      function renderTeamTable() {
+        const tableBody = document.getElementById("team-table-body");
+        if (!tableBody) return;
+
+        const searchQuery = document.getElementById("team-search")?.value.toLowerCase() || "";
+        const roleFilter = document.getElementById("team-role-filter")?.value || "all";
+
+        const filteredMembers = teamMembers.filter(member => {
+          const nameMatch = (member.name || "").toLowerCase().includes(searchQuery);
+          const emailMatch = (member.email || "").toLowerCase().includes(searchQuery);
+          const matchesSearch = nameMatch || emailMatch;
+          const matchesRole = roleFilter === "all" || (member.role || "Viewer") === roleFilter;
+          return matchesSearch && matchesRole;
+        });
+
+        if (filteredMembers.length === 0) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="5" class="px-6 py-10 text-center text-gray-500 dark:text-gray-400">
+                <div class="flex flex-col items-center gap-2">
+                  <span class="material-symbols-outlined text-4xl opacity-20">group</span>
+                  <p class="text-sm font-medium">${t('noMembersFound') || 'Tidak ada anggota tim ditemukan'}</p>
+                </div>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        let html = "";
+        filteredMembers.forEach(member => {
+          const role = member.role || "Viewer";
+          const roleBadgeClass = role === "Editor" 
+            ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" 
+            : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20";
+
+          html += `
+            <tr class="hover:bg-gray-50/80 dark:hover:bg-white/5 transition-colors">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="bg-center bg-no-repeat bg-cover rounded-full size-9 border border-gray-200"
+                       style="background-image: url('${member.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(member.name || 'User')}');">
+                  </div>
+                  <span class="text-sm font-semibold text-[#121417] dark:text-white">${member.name || 'Unknown'}</span>
+                </div>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">${member.email || '-'}</td>
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${roleBadgeClass} border uppercase tracking-wider">
+                  ${t(role.toLowerCase())}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-500">${member.lastActive || 'Tidak diketahui'}</td>
+              <td class="px-6 py-4 text-right">
+                <div class="flex justify-end gap-1 role-editor-only">
+                  <button onclick="openEditMemberModal('${member.id}')" class="p-2 text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 rounded-lg transition-all" title="${t('editUser')}">
+                    <span class="material-symbols-outlined text-[20px]">edit</span>
+                  </button>
+                  <button onclick="deleteTeamMember('${member.id}')" class="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-all" title="${t('deleteUser')}">
+                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+
+        tableBody.innerHTML = html;
+        applyRoleUI();
+      }
+
+      function openAddMemberModal() {
+        document.getElementById("team-modal-title").textContent = t('addMemberHeader');
+        document.getElementById("team-modal-sub").textContent = t('addMemberSub');
+        document.getElementById("member-id").value = "";
+        document.getElementById("member-name").value = "";
+        document.getElementById("member-email").value = "";
+        document.getElementById("member-password").value = "";
+        document.getElementById("password-field-container").style.display = "block";
+        document.getElementById("role-editor").checked = true;
+        updateRoleUI();
+        
+        const modal = document.getElementById("team-modal-overlay");
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+      }
+
+      function openEditMemberModal(id) {
+        const member = teamMembers.find(m => m.id === id);
+        if (!member) return;
+
+        document.getElementById("team-modal-title").textContent = t('editMemberHeader');
+        document.getElementById("team-modal-sub").textContent = t('editMemberSub');
+        document.getElementById("member-id").value = member.id;
+        document.getElementById("member-name").value = member.name;
+        document.getElementById("member-email").value = member.email;
+        document.getElementById("member-password").value = "********";
+        document.getElementById("password-field-container").style.display = "none";
+        
+        if (member.role === "Editor") {
+          document.getElementById("role-editor").checked = true;
+        } else {
+          document.getElementById("role-viewer").checked = true;
+        }
+        updateRoleUI();
+
+        const modal = document.getElementById("team-modal-overlay");
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+      }
+
+      function closeTeamModal() {
+        const modal = document.getElementById("team-modal-overlay");
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
+
+      function saveTeamMember(event) {
+        event.preventDefault();
+        const id = document.getElementById("member-id").value;
+        const name = document.getElementById("member-name").value;
+        const email = document.getElementById("member-email").value;
+        const password = document.getElementById("member-password").value;
+        const role = document.querySelector('input[name="member-role"]:checked').value;
+
+        if (id) {
+          // Edit Profile
+          updateMemberProfile(id, name, email, role);
+        } else {
+          // Add New Member (Auth + Profile)
+          addNewMember(name, email, password, role);
+        }
+      }
+
+      async function addNewMember(name, email, password, role) {
+        try {
+          // 1. Sign up user in Supabase Auth
+          const { data, error: authError } = await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: {
+              data: {
+                full_name: name,
+                role: role
+              }
+            }
+          });
+
+          if (authError) throw authError;
+
+          // 2. Profile is usually created via trigger in Supabase.
+          const { error: profileError } = await supabaseClient
+            .from('profiles')
+            .upsert({
+              id: data.user.id,
+              full_name: name,
+              email: email,
+              role: role
+            });
+
+          if (profileError) throw profileError;
+
+          await fetchTeamMembers();
+          closeTeamModal();
+          alert('Anggota tim berhasil ditambahkan!');
+        } catch (error) {
+          console.error('Error adding member:', error.message);
+          alert('Gagal menambah anggota: ' + error.message);
+        }
+      }
+
+      async function updateMemberProfile(id, name, email, role) {
+        try {
+          const { error } = await supabaseClient
+            .from('profiles')
+            .update({
+              full_name: name,
+              email: email,
+              role: role
+            })
+            .eq('id', id);
+
+          if (error) throw error;
+
+          await fetchTeamMembers();
+          closeTeamModal();
+          alert('Profil anggota berhasil diperbarui!');
+        } catch (error) {
+          console.error('Error updating member:', error.message);
+          alert('Gagal memperbarui profil: ' + error.message);
+        }
+      }
+
+      async function deleteTeamMember(id) {
+        if (confirm(t('confirmDeleteMember'))) {
+          try {
+            const { error } = await supabaseClient
+              .from('profiles')
+              .delete()
+              .eq('id', id);
+
+            if (error) throw error;
+
+            await fetchTeamMembers();
+            alert('Anggota tim berhasil dihapus!');
+          } catch (error) {
+            console.error('Error deleting member:', error.message);
+            alert('Gagal menghapus anggota: ' + error.message);
+          }
+        }
+      }
+
+      function toggleTeamPassword() {
+        const passInput = document.getElementById("member-password");
+        const passIcon = document.getElementById("pass-icon");
+        if (passInput.type === "password") {
+          passInput.type = "text";
+          passIcon.textContent = "visibility_off";
+        } else {
+          passInput.type = "password";
+          passIcon.textContent = "visibility";
+        }
+      }
+
+      function updateRoleUI() {
+        const isEditor = document.getElementById("role-editor").checked;
+        const labelEditor = document.getElementById("label-editor");
+        const labelViewer = document.getElementById("label-viewer");
+        const circleEditor = document.getElementById("circle-editor");
+        const circleViewer = document.getElementById("circle-viewer");
+
+        if (isEditor) {
+          labelEditor.className = "relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-emerald-500 rounded-xl cursor-pointer ring-2 ring-emerald-500/10";
+          labelViewer.className = "relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700 rounded-xl cursor-pointer transition-all";
+          circleEditor.className = "w-5 h-5 rounded-full border-4 border-emerald-500 bg-white flex items-center justify-center";
+          circleViewer.className = "w-5 h-5 rounded-full border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e1e1e]";
+        } else {
+          labelEditor.className = "relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700 rounded-xl cursor-pointer transition-all";
+          labelViewer.className = "relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-blue-500 rounded-xl cursor-pointer ring-2 ring-blue-500/10";
+          circleEditor.className = "w-5 h-5 rounded-full border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e1e1e]";
+          circleViewer.className = "w-5 h-5 rounded-full border-4 border-blue-500 bg-white flex items-center justify-center";
+        }
+      }
+
+      function toggleSidebar() {
+        sidebar.classList.toggle("-translate-x-full");
+      }
+
+      // Initialize
+      window.onload = () => {
+        navigateTo("dashboard");
+        const roleSelector = document.getElementById("roleSelector");
+        if (roleSelector) {
+          roleSelector.value = currentUserRole;
+        }
+      };
+    </script>
+  </body>
+</html>
