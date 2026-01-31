@@ -94,10 +94,10 @@
 
       /* Chat Bubbles */
       .bubble-other {
-        @apply bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-2xl rounded-tl-none p-4 max-w-[85%];
+        @apply bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg rounded-tl-none p-4 max-w-[85%];
       }
       .bubble-me {
-        @apply bg-emerald-600 text-white rounded-2xl rounded-tr-none p-4 max-w-[85%] self-end;
+        @apply bg-emerald-600 text-white rounded-lg rounded-tr-none p-4 max-w-[85%] self-end;
       }
 
       /* Fix blinking cursor/caret bug on text and icons */
@@ -298,7 +298,7 @@
           <button
             onclick="navigateTo('dashboard')"
             id="nav-dashboard"
-            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl nav-active text-left w-full"
+            class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg nav-active text-left w-full"
           >
             <span class="material-symbols-outlined">dashboard</span>
             <p class="text-sm font-medium">Dashboard</p>
@@ -306,7 +306,7 @@
           <button
             onclick="navigateTo('all-logs')"
             id="nav-all-logs"
-            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl nav-inactive text-left w-full"
+            class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg nav-inactive text-left w-full"
           >
             <span class="material-symbols-outlined">description</span>
             <p class="text-sm font-medium">All Logs</p>
@@ -314,7 +314,7 @@
           <button
             onclick="navigateTo('reports')"
             id="nav-reports"
-            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl nav-inactive text-left w-full"
+            class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg nav-inactive text-left w-full"
           >
             <span class="material-symbols-outlined">analytics</span>
             <p class="text-sm font-medium">Reports</p>
@@ -323,7 +323,7 @@
           <button
             onclick="navigateTo('settings')"
             id="nav-settings"
-            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl nav-inactive text-left w-full"
+            class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg nav-inactive text-left w-full"
           >
             <span class="material-symbols-outlined">settings</span>
             <p class="text-sm font-medium">Settings</p>
@@ -434,7 +434,7 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div
-            class="flex flex-col gap-3 rounded-xl p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm"
+            class="flex flex-col gap-3 rounded-lg p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm"
           >
             <div class="flex items-center justify-between">
               <div class="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
@@ -458,7 +458,7 @@
             </div>
           </div>
           <div
-            class="flex flex-col gap-3 rounded-xl p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm"
+            class="flex flex-col gap-3 rounded-lg p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm"
           >
             <div class="flex items-center justify-between">
               <div class="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
@@ -482,7 +482,7 @@
             </div>
           </div>
           <div
-            class="flex flex-col gap-3 rounded-xl p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm"
+            class="flex flex-col gap-3 rounded-lg p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm"
           >
             <div class="flex items-center justify-between">
               <div class="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
@@ -506,7 +506,7 @@
             </div>
           </div>
           <div
-            class="flex flex-col gap-3 rounded-xl p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm"
+            class="flex flex-col gap-3 rounded-lg p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm"
           >
             <div class="flex items-center justify-between">
               <div class="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
@@ -545,7 +545,7 @@
               type="text"
               id="dashboard-search"
               oninput="renderDashboardTable()"
-              class="w-full h-12 pl-12 pr-4 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 transition-all dark:text-white"
+              class="w-full h-12 pl-12 pr-4 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500/20 transition-all dark:text-white"
               data-t-placeholder="searchPlaceholder"
               placeholder="Search logs by ID, keyword, or severity..."
             />
@@ -555,7 +555,7 @@
               <select
                 id="dashboard-filter"
                 onchange="renderDashboardTable()"
-                class="h-full pl-10 pr-8 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-emerald-500/20 appearance-none transition-all cursor-pointer"
+                class="h-full pl-10 pr-8 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-emerald-500/20 appearance-none transition-all cursor-pointer"
               >
                 <option value="all" data-t="allStatus">All Status</option>
                 <option value="report" data-t="statusReport">🟡 Report</option>
@@ -571,7 +571,7 @@
               <select
                 id="dashboard-sort"
                 onchange="renderDashboardTable()"
-                class="h-full pl-10 pr-8 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-emerald-500/20 appearance-none transition-all cursor-pointer"
+                class="h-full pl-10 pr-8 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-emerald-500/20 appearance-none transition-all cursor-pointer"
               >
                 <option value="newest" data-t="newest">Newest</option>
                 <option value="oldest" data-t="oldest">Oldest</option>
@@ -583,7 +583,7 @@
         </div>
 
         <div
-          class="bg-white dark:bg-[#1e1e1e] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+          class="bg-white dark:bg-[#1e1e1e] rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
         >
           <div
             class="px-6 py-5 flex justify-between items-center"
@@ -593,7 +593,7 @@
             </h3>
             <button
               onclick="navigateTo('all-logs')"
-              class="bg-emerald-500/10 hover:bg-emerald-500 hover:text-white text-emerald-600 dark:text-emerald-400 dark:hover:text-white text-sm font-bold transition-all px-6 py-2.5 rounded-xl border border-emerald-500/20 flex items-center gap-2"
+              class="bg-emerald-500/10 hover:bg-emerald-500 hover:text-white text-emerald-600 dark:text-emerald-400 dark:hover:text-white text-sm font-bold transition-all px-6 py-2.5 rounded-lg border border-emerald-500/20 flex items-center gap-2"
               data-t="viewAll"
             >
               <span>View All</span>
@@ -685,7 +685,7 @@
               type="text"
               id="log-search"
               oninput="renderAllLogs()"
-              class="w-full h-12 pl-12 pr-4 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 transition-all dark:text-white"
+              class="w-full h-12 pl-12 pr-4 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500/20 transition-all dark:text-white"
               data-t-placeholder="searchPlaceholder"
               placeholder="Search logs by ID, keyword, or severity..."
             />
@@ -695,7 +695,7 @@
               <select
                 id="log-filter"
                 onchange="renderAllLogs()"
-                class="h-full pl-10 pr-8 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-emerald-500/20 appearance-none transition-all cursor-pointer"
+                class="h-full pl-10 pr-8 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-emerald-500/20 appearance-none transition-all cursor-pointer"
               >
                 <option value="all" data-t="allStatus">All Status</option>
                 <option value="report" data-t="statusReport">🟡 Report</option>
@@ -711,7 +711,7 @@
               <select
                 id="log-sort"
                 onchange="renderAllLogs()"
-                class="h-full pl-10 pr-8 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-emerald-500/20 appearance-none transition-all cursor-pointer"
+                class="h-full pl-10 pr-8 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-emerald-500/20 appearance-none transition-all cursor-pointer"
               >
                 <option value="newest" data-t="newest">Newest</option>
                 <option value="oldest" data-t="oldest">Oldest</option>
@@ -723,7 +723,7 @@
         </div>
 
         <div
-          class="flex-1 overflow-hidden bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm rounded-2xl flex flex-col"
+          class="flex-1 overflow-hidden bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm rounded-lg flex flex-col"
         >
           <div class="overflow-x-auto custom-scrollbar">
             <table class="w-full text-left border-collapse">
@@ -818,7 +818,7 @@
           <!-- Stats Grid -->
           <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div
-            class="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm"
+            class="bg-white dark:bg-[#1e1e1e] p-6 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm"
           >
             <p data-t="totalBugs" class="text-gray-500 text-sm font-medium">Total Bugs Reported</p>
             <div class="flex items-end gap-2 mt-2">
@@ -833,7 +833,7 @@
             </div>
           </div>
           <div
-            class="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm"
+            class="bg-white dark:bg-[#1e1e1e] p-6 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm"
           >
             <p data-t="avgResolution" class="text-gray-500 text-sm font-medium">
               Avg. Resolution Time
@@ -850,7 +850,7 @@
             </div>
           </div>
           <div
-            class="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm"
+            class="bg-white dark:bg-[#1e1e1e] p-6 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm"
           >
             <p data-t="resRate" class="text-gray-500 text-sm font-medium">Resolution Rate</p>
             <div class="flex items-end gap-2 mt-2">
@@ -865,7 +865,7 @@
             </div>
           </div>
           <div
-            class="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm"
+            class="bg-white dark:bg-[#1e1e1e] p-6 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm"
           >
             <p data-t="criticalBugs" class="text-gray-500 text-sm font-medium">Critical Bugs</p>
             <div class="flex items-end gap-2 mt-2">
@@ -884,7 +884,7 @@
         <!-- Chart Section -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <!-- Status Distribution -->
-          <div class="bg-white dark:bg-[#1e1e1e] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
+          <div class="bg-white dark:bg-[#1e1e1e] p-8 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
             <h3 class="text-lg font-bold dark:text-white mb-6">Status Breakdown</h3>
             <div class="h-64 flex items-center justify-center">
               <canvas id="statusChart"></canvas>
@@ -892,7 +892,7 @@
           </div>
 
           <!-- Module Distribution -->
-          <div class="bg-white dark:bg-[#1e1e1e] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
+          <div class="bg-white dark:bg-[#1e1e1e] p-8 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
             <h3 class="text-lg font-bold dark:text-white mb-6">Issues by Module</h3>
             <div class="h-64">
               <canvas id="moduleChart"></canvas>
@@ -960,7 +960,7 @@
 
         <!-- Search & Filter -->
         <div
-          class="bg-white dark:bg-[#1e1e1e] p-3 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col md:flex-row gap-3 items-center"
+          class="bg-white dark:bg-[#1e1e1e] p-3 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col md:flex-row gap-3 items-center"
         >
           <div class="flex-1 w-full relative group">
             <div
@@ -994,7 +994,7 @@
 
         <!-- Table -->
         <div
-          class="bg-white dark:bg-[#1e1e1e] rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+          class="bg-white dark:bg-[#1e1e1e] rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
         >
           <div class="overflow-x-auto custom-scrollbar">
             <table class="w-full text-left border-collapse">
@@ -1058,7 +1058,7 @@
         </div>
 
         <section
-          class="bg-white dark:bg-[#1c1f26] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+          class="bg-white dark:bg-[#1c1f26] rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
         >
           <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800">
             <h3
@@ -1100,7 +1100,7 @@
 
         <!-- Appearance Section -->
         <section
-          class="bg-white dark:bg-[#1c1f26] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+          class="bg-white dark:bg-[#1c1f26] rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
         >
           <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800">
             <h3
@@ -1155,7 +1155,7 @@
 
         <!-- Language Section -->
         <section
-          class="bg-white dark:bg-[#1c1f26] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+          class="bg-white dark:bg-[#1c1f26] rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
         >
           <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800">
             <h3
@@ -1199,7 +1199,7 @@
 
         <!-- Help & Support Section -->
         <section
-          class="bg-white dark:bg-[#1c1f26] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+          class="bg-white dark:bg-[#1c1f26] rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
         >
           <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800">
             <h3
@@ -1212,7 +1212,7 @@
           </div>
           <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             <a
-              class="flex items-center gap-4 p-4 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-emerald-500/50 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-all group"
+              class="flex items-center gap-4 p-4 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-emerald-500/50 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-all group"
               href="#"
             >
               <div
@@ -1230,7 +1230,7 @@
               </div>
             </a>
             <a
-              class="flex items-center gap-4 p-4 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-emerald-500/50 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-all group"
+              class="flex items-center gap-4 p-4 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-emerald-500/50 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-all group"
               href="#"
             >
               <div
@@ -1256,7 +1256,7 @@
             <button
               onclick="window.location.href = 'index.html'"
               data-t="logout"
-              class="flex items-center gap-2 px-10 py-3 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-400 font-bold hover:bg-red-100 dark:hover:bg-red-900/30 transition-all group"
+              class="flex items-center gap-2 px-10 py-3 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-400 font-bold hover:bg-red-100 dark:hover:bg-red-900/30 transition-all group"
             >
               <span
                 class="material-symbols-outlined group-hover:scale-110 transition-transform"
@@ -1283,7 +1283,7 @@
         </button>
         <form
           onsubmit="event.preventDefault(); saveNewLog();"
-          class="space-y-8 bg-white dark:bg-[#1e1e1e] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+          class="space-y-8 bg-white dark:bg-[#1e1e1e] rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
         >
           <div
             class="bg-gray-50 dark:bg-[#252525] px-8 py-6 border-b border-gray-200 dark:border-gray-800"
@@ -1478,7 +1478,7 @@
         </div>
 
         <div
-          class="bg-white dark:bg-[#1e1e1e] rounded-2xl p-8 text-center border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-emerald-500 transition-all group"
+          class="bg-white dark:bg-[#1e1e1e] rounded-lg p-8 text-center border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-emerald-500 transition-all group"
         >
           <div
             class="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"
@@ -1532,7 +1532,7 @@
 
         <!-- Log Summary Header Card -->
         <div
-          class="bg-white dark:bg-[#1e1e1e] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+          class="bg-white dark:bg-[#1e1e1e] rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
         >
           <div
             class="bg-gray-50 dark:bg-[#252525] px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex flex-wrap items-center gap-4"
@@ -1608,7 +1608,7 @@
           
           <!-- Tingkat Keparahan Section -->
           <div class="px-6 pt-6">
-            <div class="space-y-3 p-4 bg-orange-50/30 dark:bg-orange-900/10 rounded-xl border border-orange-100 dark:border-orange-900/20">
+            <div class="space-y-3 p-4 bg-orange-50/30 dark:bg-orange-900/10 rounded-lg border border-orange-100 dark:border-orange-900/20">
               <h4 data-t="severity" class="text-xs font-bold text-orange-600 flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm">warning</span>
                 Tingkat Keparahan
@@ -1621,7 +1621,7 @@
 
           <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
             <div
-              class="space-y-3 p-4 bg-red-50/30 dark:bg-red-900/10 rounded-xl border border-red-100 dark:border-red-900/20"
+              class="space-y-3 p-4 bg-red-50/30 dark:bg-red-900/10 rounded-lg border border-red-100 dark:border-red-900/20"
             >
               <h4
                 data-t="actualResult"
@@ -1638,7 +1638,7 @@
               </p>
             </div>
             <div
-              class="space-y-3 p-4 bg-emerald-50/30 dark:bg-emerald-900/10 rounded-xl border border-emerald-100 dark:border-emerald-900/20"
+              class="space-y-3 p-4 bg-emerald-50/30 dark:bg-emerald-900/10 rounded-lg border border-emerald-100 dark:border-emerald-900/20"
             >
               <h4
                 data-t="expectedResult"
@@ -1694,7 +1694,7 @@
 
             <!-- Comment Input -->
             <div
-              class="bg-white dark:bg-[#1e1e1e] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm mt-8"
+              class="bg-white dark:bg-[#1e1e1e] p-4 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm mt-8"
             >
               <div class="flex gap-4">
                 <div
@@ -1706,7 +1706,7 @@
                   <textarea
                     id="comment-input"
                     rows="3"
-                    class="w-full bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700 rounded-xl text-sm dark:text-white focus:ring-emerald-500 p-3"
+                    class="w-full bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700 rounded-lg text-sm dark:text-white focus:ring-emerald-500 p-3"
                     data-t-placeholder="commentPlaceholder"
                     placeholder="Tuliskan komentar atau instruksi untuk tim..."
                   ></textarea>
@@ -1732,7 +1732,7 @@
           <!-- Sidebar Log Activity -->
           <div class="space-y-6">
             <div
-              class="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm"
+              class="bg-white dark:bg-[#1e1e1e] p-6 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm"
             >
               <h3
                 data-t="activityHistory"
@@ -1780,7 +1780,7 @@
             event.preventDefault();
             saveLogUpdate();
           "
-          class="space-y-8 bg-white dark:bg-[#1e1e1e] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+          class="space-y-8 bg-white dark:bg-[#1e1e1e] rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
         >
           <div
             class="bg-gray-50 dark:bg-[#252525] px-8 py-6 border-b border-gray-200 dark:border-gray-800"
@@ -2008,7 +2008,7 @@
     >
       <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
       <div
-        class="relative bg-white dark:bg-[#1e1e1e] w-full max-w-lg rounded-2xl shadow-2xl shadow-black/20 overflow-hidden transform transition-all animate-in fade-in zoom-in duration-300 border border-gray-200 dark:border-gray-800"
+        class="relative bg-white dark:bg-[#1e1e1e] w-full max-w-lg rounded-lg shadow-2xl shadow-black/20 overflow-hidden transform transition-all animate-in fade-in zoom-in duration-300 border border-gray-200 dark:border-gray-800"
       >
         <div
           class="flex items-center justify-between px-8 py-6 border-b border-gray-100 dark:border-gray-800"
@@ -2053,7 +2053,7 @@
                 <input
                   id="member-name"
                   required
-                  class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-[#121417] dark:text-white focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
+                  class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-[#121417] dark:text-white focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
                   placeholder="Masukkan nama lengkap"
                   type="text"
                 />
@@ -2073,7 +2073,7 @@
                 <input
                   id="member-email"
                   required
-                  class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-[#121417] dark:text-white focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
+                  class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-[#121417] dark:text-white focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
                   placeholder="contoh@pesantren.digital"
                   type="email"
                 />
@@ -2092,7 +2092,7 @@
                 >
                 <input
                   id="member-password"
-                  class="w-full pl-10 pr-12 py-3 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-[#121417] dark:text-white focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
+                  class="w-full pl-10 pr-12 py-3 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-[#121417] dark:text-white focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all"
                   placeholder="••••••••"
                   type="password"
                 />
@@ -2116,7 +2116,7 @@
               <div class="grid grid-cols-2 gap-4">
                 <label
                   id="label-editor"
-                  class="relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-emerald-500 rounded-xl cursor-pointer ring-2 ring-emerald-500/10"
+                  class="relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-emerald-500 rounded-lg cursor-pointer ring-2 ring-emerald-500/10"
                 >
                   <input
                     id="role-editor"
@@ -2147,7 +2147,7 @@
                 </label>
                 <label
                   id="label-viewer"
-                  class="relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700 rounded-xl cursor-pointer transition-all"
+                  class="relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700 rounded-lg cursor-pointer transition-all"
                 >
                   <input
                     id="role-viewer"
@@ -2180,7 +2180,7 @@
           </div>
           <div class="flex gap-3 pt-2">
             <button
-              class="flex-1 py-3 px-4 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all"
+              class="flex-1 py-3 px-4 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all"
               onclick="closeTeamModal()"
               type="button"
               data-t="cancel"
@@ -2188,7 +2188,7 @@
               Batal
             </button>
             <button
-              class="flex-1 py-3 px-4 text-sm font-semibold bg-[#001D1A] dark:bg-brand-green text-white hover:opacity-90 rounded-xl transition-all shadow-lg shadow-black/10"
+              class="flex-1 py-3 px-4 text-sm font-semibold bg-[#001D1A] dark:bg-brand-green text-white hover:opacity-90 rounded-lg transition-all shadow-lg shadow-black/10"
               type="submit"
               data-t="saveAccess"
             >
@@ -3263,7 +3263,11 @@
         if (pageId === "all-logs") renderAllLogs();
         if (pageId === "reports") {
           initReportDates();
-          renderReports();
+          // Use setTimeout to ensure DOM is fully rendered before Chart.js initialization
+          // This fixes animation issues when switching pages
+          setTimeout(() => {
+            renderReports();
+          }, 50);
         }
         if (pageId === "team") renderTeamTable();
         if (pageId === "settings") {
@@ -3538,6 +3542,10 @@
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            animation: {
+              duration: 1000,
+              easing: 'easeOutQuart'
+            },
             plugins: {
               legend: {
                 position: 'bottom',
@@ -3584,6 +3592,10 @@
             responsive: true,
             maintainAspectRatio: false,
             indexAxis: 'y',
+            animation: {
+              duration: 1000,
+              easing: 'easeOutQuart'
+            },
             scales: {
               x: {
                 beginAtZero: true,
@@ -4362,13 +4374,13 @@
         const circleViewer = document.getElementById("circle-viewer");
 
         if (isEditor) {
-          labelEditor.className = "relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-emerald-500 rounded-xl cursor-pointer ring-2 ring-emerald-500/10";
-          labelViewer.className = "relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700 rounded-xl cursor-pointer transition-all";
+          labelEditor.className = "relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-emerald-500 rounded-lg cursor-pointer ring-2 ring-emerald-500/10";
+          labelViewer.className = "relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700 rounded-lg cursor-pointer transition-all";
           circleEditor.className = "w-5 h-5 rounded-full border-4 border-emerald-500 bg-white flex items-center justify-center";
           circleViewer.className = "w-5 h-5 rounded-full border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e1e1e]";
         } else {
-          labelEditor.className = "relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700 rounded-xl cursor-pointer transition-all";
-          labelViewer.className = "relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-blue-500 rounded-xl cursor-pointer ring-2 ring-blue-500/10";
+          labelEditor.className = "relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700 rounded-lg cursor-pointer transition-all";
+          labelViewer.className = "relative flex flex-col p-4 bg-gray-50 dark:bg-[#252525] border-2 border-blue-500 rounded-lg cursor-pointer ring-2 ring-blue-500/10";
           circleEditor.className = "w-5 h-5 rounded-full border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e1e1e]";
           circleViewer.className = "w-5 h-5 rounded-full border-4 border-blue-500 bg-white flex items-center justify-center";
         }
