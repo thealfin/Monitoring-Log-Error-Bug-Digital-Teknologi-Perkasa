@@ -2231,12 +2231,21 @@
           .single();
 
         if (profileError || !profile) {
-          console.error('Profile not found:', profileError);
-          return;
+          console.warn('Profile not found, using session fallback:', profileError);
+          
+          // Fallback using session data
+          currentUser = {
+            id: session.user.id,
+            email: session.user.email,
+            full_name: session.user.user_metadata?.name || session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
+            role: session.user.user_metadata?.role || "Viewer",
+            avatar_url: session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture || null
+          };
+        } else {
+          currentUser = profile;
         }
 
-        currentUser = profile;
-        currentUserRole = profile.role;
+        currentUserRole = currentUser.role || "Viewer";
         updateSidebarProfile();
 
         // Update last active
@@ -4092,7 +4101,11 @@
           showPopup('alertLogUpdated', t('alertLogUpdated'), () => viewLogDetail(id));
         } catch (error) {
           console.error('Error updating log:', error.message);
-          showPopup('alertError', 'Gagal mengupdate log: ' + error.message, null, 'error');
+          let msg = error.message;
+          if (msg && msg.includes('record "new" has no field "updated_at"')) {
+             msg = "Database Error: Kolom 'updated_at' tidak ditemukan pada tabel 'logs'. Mohon tambahkan kolom tersebut di Supabase SQL Editor: ALTER TABLE logs ADD COLUMN updated_at TIMESTAMPTZ DEFAULT NOW();";
+          }
+          showPopup('alertError', 'Gagal mengupdate log: ' + msg, null, 'error');
         }
       }
 
