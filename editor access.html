@@ -77,6 +77,9 @@
       .badge-status-reject {
         @apply bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border border-red-200;
       }
+      .badge-status-pending {
+        @apply bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 border border-orange-200;
+      }
 
       /* Priority Badges */
       .badge-prio-low {
@@ -441,9 +444,10 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <div
-            class="flex flex-col gap-3 rounded-lg p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm"
+            class="flex flex-col gap-3 rounded-lg p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm cursor-pointer hover:border-emerald-500 hover:shadow-md transition-all group"
+            onclick="navigateTo('all-logs')"
           >
             <div class="flex items-center justify-between">
               <div class="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
@@ -459,15 +463,19 @@
             </div>
             <div>
               <p class="text-gray-500 dark:text-gray-400 text-xs" data-t="totalLog">Total Log</p>
-              <p
-                class="total-count text-[#121417] dark:text-white text-2xl font-bold"
-              >
-                0
-              </p>
+              <div class="flex items-center justify-between">
+                <p
+                  class="total-count text-[#121417] dark:text-white text-2xl font-bold"
+                >
+                  0
+                </p>
+                <span class="material-symbols-outlined text-gray-300 group-hover:text-emerald-500 transition-colors">arrow_forward</span>
+              </div>
             </div>
           </div>
           <div
-            class="flex flex-col gap-3 rounded-lg p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm"
+            class="flex flex-col gap-3 rounded-lg p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm cursor-pointer hover:border-emerald-500 hover:shadow-md transition-all group"
+            onclick="viewLogsByStatus('todo')"
           >
             <div class="flex items-center justify-between">
               <div class="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
@@ -483,18 +491,50 @@
             </div>
             <div>
               <p class="text-gray-500 dark:text-gray-400 text-xs" data-t="todo">To Do</p>
-              <p
-                class="todo-count text-[#121417] dark:text-white text-2xl font-bold"
-              >
-                0
-              </p>
+              <div class="flex items-center justify-between">
+                <p
+                  class="todo-count text-[#121417] dark:text-white text-2xl font-bold"
+                >
+                  0
+                </p>
+                <span class="material-symbols-outlined text-gray-300 group-hover:text-emerald-500 transition-colors">arrow_forward</span>
+              </div>
             </div>
           </div>
           <div
-            class="flex flex-col gap-3 rounded-lg p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm"
+            class="flex flex-col gap-3 rounded-lg p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm cursor-pointer hover:border-emerald-500 hover:shadow-md transition-all group"
+            onclick="viewLogsByStatus('pending')"
           >
             <div class="flex items-center justify-between">
-              <div class="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+              <div class="p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                <span class="material-symbols-outlined text-yellow-600"
+                  >hourglass_empty</span
+                >
+              </div>
+              <span
+                class="text-xs font-bold badge-status-pending px-2 py-0.5 rounded"
+                
+                >Pending</span
+              >
+            </div>
+            <div>
+              <p class="text-gray-500 dark:text-gray-400 text-xs">Pending</p>
+              <div class="flex items-center justify-between">
+                <p
+                  class="pending-count text-[#121417] dark:text-white text-2xl font-bold"
+                >
+                  0
+                </p>
+                <span class="material-symbols-outlined text-gray-300 group-hover:text-emerald-500 transition-colors">arrow_forward</span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="flex flex-col gap-3 rounded-lg p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm cursor-pointer hover:border-emerald-500 hover:shadow-md transition-all group"
+            onclick="navigateTo('resolved-logs')"
+          >
+            <div class="flex items-center justify-between">
+              <div class="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg group-hover:bg-green-100 transition-colors">
                 <span class="material-symbols-outlined text-green-600"
                   >check_circle</span
                 >
@@ -507,15 +547,19 @@
             </div>
             <div>
               <p class="text-gray-500 dark:text-gray-400 text-xs" data-t="resolved">Resolved</p>
-              <p
-                class="done-count text-[#121417] dark:text-white text-2xl font-bold"
-              >
-                0
-              </p>
+              <div class="flex items-center justify-between">
+                <p
+                  class="done-count text-[#121417] dark:text-white text-2xl font-bold"
+                >
+                  0
+                </p>
+                <span class="material-symbols-outlined text-gray-300 group-hover:text-emerald-500 transition-colors">arrow_forward</span>
+              </div>
             </div>
           </div>
           <div
-            class="flex flex-col gap-3 rounded-lg p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm"
+            class="flex flex-col gap-3 rounded-lg p-5 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm cursor-pointer hover:border-emerald-500 hover:shadow-md transition-all group"
+            onclick="viewLogsByStatus('reject')"
           >
             <div class="flex items-center justify-between">
               <div class="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
@@ -531,11 +575,14 @@
             </div>
             <div>
               <p class="text-gray-500 dark:text-gray-400 text-xs" data-t="reject">Reject</p>
-              <p
-                class="reject-count text-[#121417] dark:text-white text-2xl font-bold"
-              >
-                0
-              </p>
+              <div class="flex items-center justify-between">
+                <p
+                  class="reject-count text-[#121417] dark:text-white text-2xl font-bold"
+                >
+                  0
+                </p>
+                <span class="material-symbols-outlined text-gray-300 group-hover:text-emerald-500 transition-colors">arrow_forward</span>
+              </div>
             </div>
           </div>
         </div>
@@ -570,6 +617,7 @@
                 <option value="report" data-t="statusReport">🟡 Report</option>
                 <option value="todo" data-t="statusTodo">🔵 To Do</option>
                 <option value="progress" data-t="statusProgress">On Progress</option>
+                <option value="pending" data-t="statusPending">🟠 Pending</option>
                 <option value="done" data-t="statusDone">🟢 Done</option>
                 <option value="reject" data-t="statusReject">🔴 Reject</option>
               </select>
@@ -710,6 +758,7 @@
                 <option value="report" data-t="statusReport">🟡 Report</option>
                 <option value="todo" data-t="statusTodo">🔵 To Do</option>
                 <option value="progress" data-t="statusProgress">On Progress</option>
+                <option value="pending" data-t="statusPending">🟠 Pending</option>
                 <option value="done" data-t="statusDone">🟢 Done</option>
                 <option value="reject" data-t="statusReject">🔴 Reject</option>
               </select>
@@ -776,6 +825,97 @@
             <div class="flex gap-2">
               <button onclick="changePage('prev')" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-800 text-xs font-bold text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed" id="btn-prev">Previous</button>
               <button onclick="changePage('next')" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-800 text-xs font-bold text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed" id="btn-next">Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- RESOLVED LOGS TEMPLATE -->
+    <template id="tpl-resolved-logs">
+      <div class="flex flex-col h-full animate-in fade-in duration-500">
+        <div
+          class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"
+        >
+          <div class="flex flex-col gap-1">
+            <h2
+              class="text-[#121417] dark:text-white text-2xl font-extrabold tracking-tight"
+            >
+              <span data-t="statusDone">Finished</span> Logs
+            </h2>
+            <p class="text-gray-500 dark:text-gray-400 text-sm">
+              Daftar semua log yang telah dinyatakan selesai atau resolved.
+            </p>
+          </div>
+          <div class="flex gap-3">
+             <button
+              onclick="navigateTo('dashboard')"
+              class="flex items-center justify-center gap-2 h-10 px-4 rounded-lg bg-white dark:bg-[#252525] border border-gray-200 dark:border-gray-700 text-[#121417] dark:text-white text-sm font-semibold shadow-sm hover:bg-gray-50 dark:hover:bg-[#2a2a2a] transition-all"
+            >
+              <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+              <span data-t="backToDashboard">Kembali</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- SEARCH BAR ONLY -->
+        <div class="flex flex-col md:flex-row gap-4 mb-6">
+          <div class="flex-1 relative">
+            <div
+              class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+            >
+              <span class="material-symbols-outlined text-gray-500 text-[22px]"
+                >search</span
+              >
+            </div>
+            <input
+              type="text"
+              id="resolved-search"
+              oninput="renderResolvedLogs()"
+              class="w-full h-12 pl-12 pr-4 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500/20 transition-all dark:text-white"
+              data-t-placeholder="searchPlaceholder"
+              placeholder="Cari log yang selesai..."
+            />
+          </div>
+        </div>
+
+        <div
+          class="flex-1 overflow-hidden bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 shadow-sm rounded-lg flex flex-col"
+        >
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr
+                  class="border-b border-gray-100 dark:border-gray-800 text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                >
+                  <th class="px-6 py-4" data-t="no">No</th>
+                  <th class="px-6 py-4" data-t="date">Tanggal</th>
+                  <th class="px-6 py-4" data-t="module">Modul</th>
+                  <th class="px-6 py-4" data-t="status">Status</th>
+                  <th class="px-6 py-4" data-t="priority">Prioritas</th>
+                  <th class="px-6 py-4" data-t="reporter">Pelapor</th>
+                  <th class="px-6 py-4 text-right" data-t="action">Aksi</th>
+                </tr>
+              </thead>
+              <tbody
+                id="resolved-logs-table-body"
+                class="divide-y divide-gray-50 dark:divide-gray-800/50 text-sm"
+              >
+                <!-- Data injected here -->
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- PAGINATION / FOOTER -->
+          <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <p class="text-xs text-gray-500">
+                <span data-t="showing">Showing</span> <span id="res-pagination-start">1</span> <span data-t="to">to</span> <span id="res-pagination-end">10</span> <span data-t="of">of</span> <span class="resolved-logs-total-count">0</span> <span data-t="logs">logs</span>
+              </p>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="changeResPage('prev')" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-800 text-xs font-bold text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed" id="btn-res-prev">Previous</button>
+              <button onclick="changeResPage('next')" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-800 text-xs font-bold text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed" id="btn-res-next">Next</button>
             </div>
           </div>
         </div>
@@ -1413,6 +1553,7 @@
                     <option data-t="statusReport" value="report">🟡 Report</option>
                     <option data-t="statusTodo" value="todo">🔵 To Do</option>
                     <option data-t="statusProgress" value="progress">🟣 On Progress</option>
+                    <option data-t="statusPending" value="pending">🟠 Pending</option>
                     <option data-t="statusDone" value="done">🟢 Done</option>
                     <option data-t="statusReject" value="reject">🔴 Reject</option>
                   </select>
@@ -1907,6 +2048,7 @@
                     <option data-t="statusReport" value="report">🟡 Report</option>
                     <option data-t="statusTodo" value="todo">🔵 To Do</option>
                     <option data-t="statusProgress" value="progress">🟣 On Progress</option>
+                    <option data-t="statusPending" value="pending">🟠 Pending</option>
                     <option data-t="statusDone" value="done">🟢 Done</option>
                     <option data-t="statusReject" value="reject">🔴 Reject</option>
                   </select>
@@ -2357,7 +2499,7 @@
             id: m.id,
             name: m.full_name,
             email: m.email,
-            role: m.role,
+            role: m.role || 'Viewer', // Fallback to Viewer if null
             lastActive: formatLastActive(m.last_active),
             avatar: m.avatar_url
           }));
@@ -2483,6 +2625,7 @@
           statusReport: "🟡 Report",
           statusTodo: "🔵 To Do",
           statusProgress: "🟣 On Progress",
+          statusPending: "🟠 Pending",
           statusDone: "🟢 Done",
           statusReject: "🔴 Reject",
           prioLow: "🟡 Rendah",
@@ -2681,6 +2824,7 @@
           statusReport: "🟡 Report",
           statusTodo: "🔵 To Do",
           statusProgress: "🟣 On Progress",
+          statusPending: "🟠 Pending",
           statusDone: "🟢 Done",
           statusReject: "🔴 Reject",
           prioLow: "🟡 Low",
@@ -2879,6 +3023,7 @@
           statusReport: "🟡 بلاغ",
           statusTodo: "🔵 قيد التنفيذ",
           statusProgress: "🟣 جاري العمل",
+          statusPending: "🟠 قيد الانتظار",
           statusDone: "🟢 تم الحل",
           statusReject: "🔴 مرفوض",
           prioLow: "🟡 منخفض",
@@ -3242,6 +3387,7 @@
           template: "tpl-log-detail",
         },
         "edit-log": { title: "editLog", template: "tpl-edit-log" },
+        "resolved-logs": { title: "statusDone", template: "tpl-resolved-logs" },
       };
 
       function updateRole(role) {
@@ -3253,6 +3399,15 @@
           ? currentActivePage.id.replace("nav-", "")
           : "dashboard";
         navigateTo(pageId);
+      }
+
+      function viewLogsByStatus(status) {
+        navigateTo("all-logs");
+        const filter = document.getElementById("log-filter");
+        if (filter) {
+          filter.value = status;
+          renderAllLogs();
+        }
       }
 
       function navigateTo(pageId) {
@@ -3276,6 +3431,7 @@
         // Apply Page Specific Logic
         if (pageId === "dashboard") renderDashboardTable();
         if (pageId === "all-logs") renderAllLogs();
+        if (pageId === "resolved-logs") renderResolvedLogs();
         if (pageId === "reports") {
           initReportDates();
           // Use setTimeout to ensure DOM is fully rendered before Chart.js initialization
@@ -3512,6 +3668,7 @@
           report: 0,
           todo: 0,
           progress: 0,
+          pending: 0,
           done: 0,
           reject: 0
         };
@@ -3540,9 +3697,9 @@
           avgResEl.textContent = filteredLogs.length > 0 ? '24h' : '0h';
         }
 
-        const statusLabels = ['Report', 'To Do', 'On Progress', 'Done', 'Reject'];
-        const statusData = [statusCounts.report, statusCounts.todo, statusCounts.progress, statusCounts.done, statusCounts.reject];
-        const statusColors = ['#eab308', '#3b82f6', '#a855f7', '#22c55e', '#ef4444'];
+        const statusLabels = ['Report', 'To Do', 'On Progress', 'Pending', 'Done', 'Reject'];
+        const statusData = [statusCounts.report, statusCounts.todo, statusCounts.progress, statusCounts.pending, statusCounts.done, statusCounts.reject];
+        const statusColors = ['#eab308', '#3b82f6', '#a855f7', '#f97316', '#22c55e', '#ef4444'];
 
         if (statusChartInstance) statusChartInstance.destroy();
         statusChartInstance = new Chart(statusCtx, {
@@ -3661,6 +3818,9 @@
         if (!tbody) return;
 
         let filteredLogs = logs.filter(log => {
+          // Hide logs with status 'done' in dashboard preview
+          if ((log.status || "report") === "done") return false;
+
           const modulMatch = (log.modul || "").toLowerCase().includes(searchQuery);
           const pelaporMatch = (log.pelapor || "").toLowerCase().includes(searchQuery);
           const noLapMatch = (log.noLap || "").toString().includes(searchQuery);
@@ -3690,58 +3850,58 @@
               </td>
             </tr>
           `;
-          return;
+        } else {
+          tbody.innerHTML = filteredLogs
+            .slice(0, 5)
+            .map(
+              (log, i) => {
+                const status = log.status || 'report';
+                const statusKey = 'status' + status.charAt(0).toUpperCase() + status.slice(1);
+                return `
+                  <tr class="hover:bg-gray-50 dark:hover:bg-[#252525] transition-colors group">
+                      <td class="px-6 py-5 font-bold text-gray-400 dark:text-gray-500 text-xs tracking-wider group-hover:text-emerald-500 transition-colors">#${log.noLap || i + 1}</td>
+                      <td class="px-6 py-5">
+                          <div class="flex flex-col">
+                              <span class="dark:text-white font-bold text-sm mb-0.5">${log.modul || 'Unknown'}</span>
+                              <span class="text-[11px] text-gray-400 dark:text-gray-500 line-clamp-1">Project: ${currentAppName || 'Website Log Bug & Error'}</span>
+                          </div>
+                      </td>
+                      <td class="px-6 py-5">
+                          <span class="badge-status-${status} px-3 py-1 rounded-full text-[10px] font-bold uppercase ring-1 ring-inset ring-current/20">${t(statusKey)}</span>
+                      </td>
+                      <td class="px-6 py-5">
+                          <div class="flex items-center gap-3">
+                              <div class="size-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 font-bold text-xs overflow-hidden">
+                                  ${(log.pelapor || 'U').charAt(0)}
+                              </div>
+                              <span class="dark:text-gray-300 font-semibold text-xs">${log.pelapor || 'Unknown'}</span>
+                          </div>
+                      </td>
+                      <td class="px-6 py-5 text-gray-500 dark:text-gray-400 text-xs font-medium">
+                          ${getTimeAgo(log.tanggal || new Date())}
+                      </td>
+                      <td class="px-6 py-5 text-right">
+                          <button onclick="viewLogDetail(${log.id})" class="p-2.5 text-gray-400 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-lg transition-all"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+                      </td>
+                  </tr>
+              `;
+              }
+            )
+            .join("");
         }
-
-        tbody.innerHTML = filteredLogs
-          .slice(0, 5)
-          .map(
-            (log, i) => {
-              const status = log.status || 'report';
-              const statusKey = 'status' + status.charAt(0).toUpperCase() + status.slice(1);
-              return `
-                <tr class="hover:bg-gray-50 dark:hover:bg-[#252525] transition-colors group">
-                    <td class="px-6 py-5 font-bold text-gray-400 dark:text-gray-500 text-xs tracking-wider group-hover:text-emerald-500 transition-colors">#${i + 1}</td>
-                    <td class="px-6 py-5">
-                        <div class="flex flex-col">
-                            <span class="dark:text-white font-bold text-sm mb-0.5">${log.modul || 'Unknown'}</span>
-                            <span class="text-[11px] text-gray-400 dark:text-gray-500 line-clamp-1">Project: ${currentAppName || 'Website Log Bug & Error'}</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-5">
-                        <span class="badge-status-${status} px-3 py-1 rounded-full text-[10px] font-bold uppercase ring-1 ring-inset ring-current/20">${t(statusKey)}</span>
-                    </td>
-                    <td class="px-6 py-5">
-                        <div class="flex items-center gap-3">
-                            <div class="size-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 font-bold text-xs overflow-hidden">
-                                ${(log.pelapor || 'U').charAt(0)}
-                            </div>
-                            <span class="dark:text-gray-300 font-semibold text-xs">${log.pelapor || 'Unknown'}</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-5 text-gray-500 dark:text-gray-400 text-xs font-medium">
-                        ${getTimeAgo(log.tanggal || new Date())}
-                    </td>
-                    <td class="px-6 py-5 text-right">
-                        <button onclick="viewLogDetail(${log.id})" class="p-2.5 text-gray-400 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-lg transition-all"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
-                    </td>
-                </tr>
-            `;
-            }
-          )
-          .join("");
 
         // Update stats
         const totalEl = document.querySelector(".total-count");
         const todoEl = document.querySelector(".todo-count");
+        const pendingEl = document.querySelector(".pending-count");
         const doneEl = document.querySelector(".done-count");
         const rejectEl = document.querySelector(".reject-count");
-        const dashboardTotalCount = document.querySelector(".dashboard-total-count");
 
         if (totalEl) totalEl.textContent = logs.length;
-        if (dashboardTotalCount) dashboardTotalCount.textContent = logs.length;
         if (todoEl)
           todoEl.textContent = logs.filter((l) => (l.status || "").toLowerCase() === "todo").length;
+        if (pendingEl)
+          pendingEl.textContent = logs.filter((l) => (l.status || "").toLowerCase() === "pending").length;
         if (doneEl)
           doneEl.textContent = logs.filter((l) => (l.status || "").toLowerCase() === "done").length;
         if (rejectEl)
@@ -3870,14 +4030,136 @@
       function changePage(direction) {
         if (direction === 'prev' && currentPage > 1) {
           currentPage--;
+          renderAllLogs();
         } else if (direction === 'next') {
-          const totalItems = logs.length; // Simplified for now, will be filtered in render
+          const totalItems = logs.filter((log) => {
+            const searchQuery = document.getElementById("log-search")?.value.toLowerCase() || "";
+            const filterValue = document.getElementById("log-filter")?.value || "all";
+            const modulMatch = (log.modul || "").toLowerCase().includes(searchQuery);
+            const pelaporMatch = (log.pelapor || "").toLowerCase().includes(searchQuery);
+            const noLapMatch = (log.noLap || "").toString().includes(searchQuery);
+            const priorityMatch = (log.priority || "").toLowerCase().includes(searchQuery);
+            const matchesSearch = modulMatch || pelaporMatch || noLapMatch || priorityMatch;
+            const matchesFilter = filterValue === "all" || (log.status || "report") === filterValue;
+            return matchesSearch && matchesFilter;
+          }).length;
           const totalPages = Math.ceil(totalItems / rowsPerPage);
           if (currentPage < totalPages) {
             currentPage++;
           }
+          renderAllLogs();
         }
-        renderAllLogs();
+      }
+
+      let resCurrentPage = 1;
+
+      function renderResolvedLogs() {
+        const tbody = document.getElementById("resolved-logs-table-body");
+        const searchQuery = document.getElementById("resolved-search")?.value.toLowerCase() || "";
+        
+        if (!tbody) return;
+
+        // Filter only contextually 'done' logs
+        let filteredLogs = logs.filter((log) => {
+          const isDone = (log.status || "").toLowerCase() === "done";
+          if (!isDone) return false;
+
+          const modulMatch = (log.modul || "").toLowerCase().includes(searchQuery);
+          const pelaporMatch = (log.pelapor || "").toLowerCase().includes(searchQuery);
+          const noLapMatch = (log.noLap || "").toString().includes(searchQuery);
+          
+          return modulMatch || pelaporMatch || noLapMatch;
+        });
+
+        const totalItems = filteredLogs.length;
+        const totalPages = Math.ceil(totalItems / rowsPerPage);
+        
+        if (resCurrentPage > totalPages && totalPages > 0) resCurrentPage = totalPages;
+        if (resCurrentPage < 1) resCurrentPage = 1;
+
+        const startIndex = (resCurrentPage - 1) * rowsPerPage;
+        const endIndex = Math.min(startIndex + rowsPerPage, totalItems);
+        const paginatedLogs = filteredLogs.slice(startIndex, endIndex);
+
+        if (totalItems === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" class="px-6 py-10 text-center text-gray-500 dark:text-gray-400">
+                <div class="flex flex-col items-center gap-2">
+                  <span class="material-symbols-outlined text-4xl opacity-20">inventory_2</span>
+                  <p class="text-sm font-medium">Belum ada log yang selesai.</p>
+                </div>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = paginatedLogs
+          .map(
+            (log, i) => {
+              const status = log.status || 'done';
+              const priority = log.priority || 'low';
+              const statusKey = 'status' + status.charAt(0).toUpperCase() + status.slice(1);
+              const priorityKey = 'prio' + priority.charAt(0).toUpperCase() + priority.slice(1);
+              const displayNo = startIndex + i + 1;
+              return `
+                <tr class="hover:bg-gray-50 dark:hover:bg-[#252525] transition-colors group">
+                    <td class="px-6 py-5 font-bold text-gray-400 dark:text-gray-500 text-xs tracking-wider group-hover:text-emerald-500 transition-colors">#${displayNo}</td>
+                    <td class="px-6 py-5 text-gray-500 dark:text-gray-400 text-xs font-medium">
+                        ${new Date(log.tanggal || Date.now()).toLocaleDateString('id-ID')}
+                    </td>
+                    <td class="px-6 py-5">
+                        <div class="flex flex-col">
+                            <span class="dark:text-white font-bold text-sm mb-0.5">${log.modul || 'Unknown'}</span>
+                            <span class="text-[11px] text-gray-400 dark:text-gray-500 line-clamp-1">Project: ${currentAppName || 'Website Log Bug & Error'}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5">
+                        <span class="badge-status-done px-3 py-1 rounded-full text-[10px] font-bold uppercase ring-1 ring-inset ring-current/20">${t(statusKey)}</span>
+                    </td>
+                    <td class="px-6 py-5">
+                        <span class="badge-prio-${priority} px-3 py-1 rounded-full text-[10px] font-bold uppercase ring-1 ring-inset ring-current/20">${t(priorityKey)}</span>
+                    </td>
+                    <td class="px-6 py-5">
+                        <div class="flex items-center gap-3">
+                            <div class="size-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 font-bold text-xs overflow-hidden">
+                                ${(log.pelapor || 'U').charAt(0)}
+                            </div>
+                            <span class="dark:text-gray-300 font-semibold text-xs">${log.pelapor || 'Unknown'}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5 text-right">
+                        <button onclick="viewLogDetail(${log.id})" class="p-2.5 text-gray-400 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-lg transition-all"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+                    </td>
+                </tr>
+            `;
+            }
+          )
+          .join("");
+
+        // Update Pagination Info
+        const startEl = document.getElementById("res-pagination-start");
+        const endEl = document.getElementById("res-pagination-end");
+        const totalEl = document.querySelector(".resolved-logs-total-count");
+        const btnPrev = document.getElementById("btn-res-prev");
+        const btnNext = document.getElementById("btn-res-next");
+
+        if (startEl) startEl.textContent = totalItems === 0 ? 0 : startIndex + 1;
+        if (endEl) endEl.textContent = endIndex;
+        if (totalEl) totalEl.textContent = totalItems;
+        if (btnPrev) btnPrev.disabled = resCurrentPage === 1;
+        if (btnNext) btnNext.disabled = resCurrentPage === totalPages || totalPages === 0;
+      }
+
+      function changeResPage(direction) {
+        if (direction === 'prev' && resCurrentPage > 1) {
+          resCurrentPage--;
+          renderResolvedLogs();
+        } else if (direction === 'next') {
+          resCurrentPage++;
+          renderResolvedLogs();
+        }
       }
 
       function changeRowsPerPage(value) {
@@ -4301,8 +4583,6 @@
       async function addNewMember(name, email, password, role) {
         try {
           // 1. Sign up user in Supabase Auth
-          // Note: In a real app, this might need a service role or invite flow.
-          // For now, we use the standard signUp.
           const { data, error: authError } = await supabaseClient.auth.signUp({
             email,
             password,
