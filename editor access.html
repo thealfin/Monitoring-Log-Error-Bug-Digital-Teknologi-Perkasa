@@ -1847,9 +1847,10 @@
             >
               <div class="flex gap-4">
                 <div
+                  id="comment-user-initial"
                   class="size-10 rounded-full bg-[var(--sidebar-color)] shrink-0 flex items-center justify-center text-white font-bold text-sm"
                 >
-                  AF
+                  ??
                 </div>
                 <div class="flex-1 space-y-3">
                   <textarea
@@ -1859,8 +1860,18 @@
                     data-t-placeholder="commentPlaceholder"
                     placeholder="Tuliskan komentar atau instruksi untuk tim..."
                   ></textarea>
+                  <div id="comment-file-preview" class="hidden flex items-center gap-2 p-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-xs">
+                    <span class="material-symbols-outlined text-sm">attachment</span>
+                    <span id="comment-file-name" class="flex-1 truncate dark:text-gray-300"></span>
+                    <button onclick="clearCommentFile()" class="p-1 text-red-500 hover:bg-red-500/10 rounded">
+                      <span class="material-symbols-outlined text-sm">close</span>
+                    </button>
+                  </div>
                   <div class="flex justify-end gap-2">
+                    <input type="file" id="comment-file-input" class="hidden" accept="image/*,video/*" onchange="handleCommentFileSelect()">
                     <button
+                      type="button"
+                      onclick="document.getElementById('comment-file-input').click()"
                       class="p-2 text-gray-400 hover:text-emerald-500 transition-colors"
                     >
                       <span class="material-symbols-outlined">attachment</span>
@@ -4200,6 +4211,12 @@
         statusEl.className = `badge-status-${statusValue} px-3 py-1 rounded-full text-xs font-bold uppercase`;
         statusEl.textContent = t(statusKey);
 
+        // Update comment avatar initial
+        const commentInitial = document.getElementById("comment-user-initial");
+        if (commentInitial && currentUser) {
+          commentInitial.textContent = (currentUser.full_name || "U").split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        }
+
         // Edit button for editor
         const actions = document.getElementById("detail-actions");
         actions.innerHTML = `
@@ -4231,7 +4248,9 @@
             user: c.profiles ? (Array.isArray(c.profiles) ? c.profiles[0]?.full_name : c.profiles.full_name) : 'Unknown',
             role: c.profiles ? (Array.isArray(c.profiles) ? c.profiles[0]?.role : c.profiles.role) : 'User',
             text: c.comment_text || '',
-            time: formatCommentTime(c.created_at)
+            time: formatCommentTime(c.created_at),
+            mediaUrl: c.media_url,
+            mediaType: c.media_type
           }));
 
           renderComments(logId);
@@ -4252,7 +4271,14 @@
 
         container.innerHTML = comments
           .map(
-            (c) => `
+            (c) => {
+              const mediaHtml = c.mediaUrl ? (
+                c.mediaType === 'image' 
+                  ? `<div class="mb-2"><img src="${c.mediaUrl}" class="max-w-[240px] w-full rounded-lg shadow-sm border border-gray-100 dark:border-gray-800 cursor-pointer hover:opacity-95 transition-opacity" onclick="window.open('${c.mediaUrl}', '_blank')"></div>`
+                  : `<div class="mb-2"><video src="${c.mediaUrl}" controls class="max-w-[240px] w-full rounded-lg shadow-sm border border-gray-100 dark:border-gray-800"></video></div>`
+              ) : '';
+
+              return `
                 <div class="flex gap-4 ${c.user === currentUser?.full_name ? "flex-row-reverse" : ""}">
                     <div class="size-10 rounded-full ${c.role === "Editor" ? "bg-emerald-600" : "bg-blue-600"} shrink-0 flex items-center justify-center text-white font-bold text-sm">
                         ${(c.user || "U").charAt(0)}
@@ -4262,12 +4288,14 @@
                             <span class="text-xs font-bold dark:text-white">${c.user || "Unknown"}</span>
                             <span class="text-[10px] text-gray-400">${c.time || ""}</span>
                         </div>
-                        <div class="${c.user === currentUser?.full_name ? "bubble-me" : "bubble-other"}">
-                            <p class="text-sm">${c.text || ""}</p>
+                        <div class="${c.user === currentUser?.full_name ? "bubble-me" : "bubble-other"} max-w-[280px] w-fit">
+                            ${mediaHtml}
+                            ${c.text ? `<p class="text-sm break-words">${c.text}</p>` : ''}
                         </div>
                     </div>
                 </div>
-            `,
+              `;
+            }
           )
           .join("");
 
@@ -4278,29 +4306,84 @@
         }
       }
 
+      let selectedCommentFile = null;
+
+      function handleCommentFileSelect() {
+        const input = document.getElementById('comment-file-input');
+        const preview = document.getElementById('comment-file-preview');
+        const nameLabel = document.getElementById('comment-file-name');
+
+        if (input.files && input.files[0]) {
+          selectedCommentFile = input.files[0];
+          nameLabel.textContent = selectedCommentFile.name;
+          preview.classList.remove('hidden');
+        }
+      }
+
+      function clearCommentFile() {
+        selectedCommentFile = null;
+        document.getElementById('comment-file-input').value = '';
+        document.getElementById('comment-file-preview').classList.add('hidden');
+      }
+
       async function postComment() {
         const input = document.getElementById("comment-input");
         const logId = parseInt(input.getAttribute("data-log-id"));
-        if (input.value.trim() === "" || !currentUser) return;
+        if ((input.value.trim() === "" && !selectedCommentFile) || !currentUser) return;
 
         const commentText = input.value.trim();
+        const sendBtn = document.querySelector('button[onclick="postComment()"]');
+        const originalText = sendBtn.textContent;
 
         try {
+          sendBtn.disabled = true;
+          sendBtn.textContent = 'Mengirim...';
+
+          let mediaUrl = null;
+          let mediaType = null;
+
+          if (selectedCommentFile) {
+            const fileExt = selectedCommentFile.name.split('.').pop();
+            const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+            const filePath = `${logId}/${fileName}`;
+
+            const { data: uploadData, error: uploadError } = await supabaseClient
+              .storage
+              .from('discussion_attachments')
+              .upload(filePath, selectedCommentFile);
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabaseClient
+              .storage
+              .from('discussion_attachments')
+              .getPublicUrl(filePath);
+            
+            mediaUrl = publicUrl;
+            mediaType = selectedCommentFile.type.startsWith('image/') ? 'image' : 'video';
+          }
+
           const { error } = await supabaseClient
             .from('discussion_forum')
             .insert([{
               log_id: logId,
               user_id: currentUser.id,
-              comment_text: commentText
+              comment_text: commentText,
+              media_url: mediaUrl,
+              media_type: mediaType
             }]);
 
           if (error) throw error;
 
           input.value = "";
+          clearCommentFile();
           await fetchComments(logId);
         } catch (error) {
           console.error('Error posting comment:', error.message);
-          showPopup('alertError', error.message, null, 'error');
+          alert('Gagal mengirim komentar: ' + error.message);
+        } finally {
+          sendBtn.disabled = false;
+          sendBtn.textContent = originalText;
         }
       }
 
